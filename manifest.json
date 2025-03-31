@@ -1,0 +1,10 @@
+{
+  "id": "memodack",
+  "name": "Memodack",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Your second language memory tool",
+  "author": "memodack",
+  "authorUrl": "https://github.com/obsidian-memodack-plugin/obsidian-memodack-plugin",
+  "isDesktopOnly": false
+}
