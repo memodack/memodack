@@ -1,24 +1,36 @@
 import { requestUrl } from 'obsidian';
 
 export interface ITtsService {
-  tts(source: string, text: string): Promise<string | null>;
+  setApiKey(apiKey: string): void;
+  setSource(source: string): void;
+  tts(value: string): Promise<string | null>;
 }
 
 export class TtsService implements ITtsService {
   private apiKey: string;
+  private source: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, source: string) {
+    this.apiKey = apiKey;
+    this.source = source;
+  }
+
+  setApiKey(apiKey: string): void {
     this.apiKey = apiKey;
   }
 
-  async tts(source: string, text: string): Promise<string | null> {
+  setSource(source: string): void {
+    this.source = source;
+  }
+
+  async tts(value: string): Promise<string | null> {
     try {
       const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${this.apiKey}`;
 
       const requestBody = {
-        input: { text: text },
+        input: { text: value },
         voice: {
-          languageCode: source,
+          languageCode: this.source,
           ssmlGender: 'NEUTRAL',
         },
         audioConfig: { audioEncoding: 'MP3' },
