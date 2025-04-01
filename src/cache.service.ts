@@ -40,7 +40,6 @@ export class CacheService implements ICacheService {
   async get(key: string): Promise<string | null> {
     try {
       if (!(await this.vault.adapter.exists(`${this.directoryPath}/${key}`))) {
-        console.error(`Cache with key ${key} doesn't exist.`);
         return null;
       }
 
