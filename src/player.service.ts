@@ -1,11 +1,17 @@
 export interface IPlayerService {
-  play(audioUrl: string, speed: number): Promise<void>;
+  setSpeed(speed: number): void;
+  play(audioUrl: string): Promise<void>;
 }
 
 export class PlayerService implements IPlayerService {
   private audio = new Audio();
+  private speed = 1;
 
-  async play(audioUrl: string, speed: number): Promise<void> {
+  setSpeed(speed: number): void {
+    this.speed = speed;
+  }
+
+  async play(audioUrl: string): Promise<void> {
     if (!audioUrl) {
       throw new Error('The audioUrl is required for audio playback.');
     }
@@ -16,16 +22,14 @@ export class PlayerService implements IPlayerService {
     try {
       await this.audio.play();
       this.audio.volume = 1;
-
-      // Speed
-      this.audio.playbackRate = speed;
+      this.audio.playbackRate = this.speed;
 
       // Waiting for playback to finish
       await new Promise<void>((resolve, reject) => {
         this.audio.addEventListener('ended', () => resolve(), { once: true });
         this.audio.addEventListener(
           'error',
-          () => reject(new Error('Audio playback error')),
+          () => reject(new Error('Audio playback error.')),
           { once: true },
         );
       });
