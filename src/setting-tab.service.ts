@@ -1,6 +1,6 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 
-import MemodackPlugin from './main';
+import MemoduckPlugin from './main';
 import { languages } from './languages';
 import prettyBytes from 'pretty-bytes';
 
@@ -27,9 +27,9 @@ export const DEFAULT_SETTINGS: Partial<ISettings> = {
 };
 
 export class SettingTabService extends PluginSettingTab {
-  plugin: MemodackPlugin;
+  plugin: MemoduckPlugin;
 
-  constructor(app: App, plugin: MemodackPlugin) {
+  constructor(app: App, plugin: MemoduckPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
