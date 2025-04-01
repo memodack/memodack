@@ -117,7 +117,7 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('When pressed play')
-      .setDesc('Will be voiced when you click on a word or phrase.')
+      .setDesc('Will be voiced when you click on a part.')
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
