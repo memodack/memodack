@@ -5,13 +5,13 @@
   "license": "MIT",
   "author": "memodack",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rimraf ./dist && rollup -c",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "start:dev": "rollup -c -w"
+    "start:dev": "rimraf ./dist && rollup -c -w"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
@@ -26,6 +26,7 @@
     "husky": "^9.1.7",
     "obsidian": "^1.8.7",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "rollup": "^4.38.0",
     "rollup-plugin-copy": "^3.5.0",
     "tslib": "^2.8.1",
