@@ -63,10 +63,6 @@ export default class MemodackPlugin extends Plugin {
       this.settings.source,
       this.settings.target,
     );
-    const translateCommandService = new TranslateCommandService(
-      this.translationService,
-      this.actionsService,
-    );
     const hashService = new HashService();
     const audioService = new AudioService(
       this.cacheService,
@@ -79,6 +75,10 @@ export default class MemodackPlugin extends Plugin {
       this.settings.playVariant,
       this.settings.source,
       this.settings.target,
+    );
+    const translateCommandService = new TranslateCommandService(
+      this.translationService,
+      this.actionsService,
     );
     const mppService = new MppService(this.actionsService);
     const partsService = new PartsService(this.app);
