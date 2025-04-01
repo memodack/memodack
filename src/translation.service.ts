@@ -1,32 +1,43 @@
 import { requestUrl } from 'obsidian';
 
 export interface ITranslationService {
-  translate(
-    source: string,
-    target: string,
-    text: string,
-  ): Promise<string | null>;
+  setApiKey(apiKey: string): void;
+  setSource(source: string): void;
+  setTarget(target: string): void;
+  translate(text: string): Promise<string | null>;
 }
 
-export class TranslationService {
+export class TranslationService implements ITranslationService {
   private apiKey: string;
+  private source: string;
+  private target: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, source: string, target: string) {
+    this.apiKey = apiKey;
+    this.source = source;
+    this.target = target;
+  }
+
+  setApiKey(apiKey: string): void {
     this.apiKey = apiKey;
   }
 
-  async translate(
-    source: string,
-    target: string,
-    text: string,
-  ): Promise<string | null> {
+  setSource(source: string): void {
+    this.source = source;
+  }
+
+  setTarget(target: string): void {
+    this.target = target;
+  }
+
+  async translate(text: string): Promise<string | null> {
     try {
       const url = `https://translation.googleapis.com/language/translate/v2?key=${this.apiKey}`;
 
       const requestBody = {
         q: text,
-        source: source,
-        target: target,
+        source: this.source,
+        target: this.target,
         format: 'text',
       };
 
