@@ -30,6 +30,8 @@ export class BlitzService implements IBlitzService {
   }
 
   create(parts: IPart[]): void {
+    this.blitzMap.clear();
+
     const shuffleParts = this.shuffleService.shuffle(parts);
 
     shuffleParts.forEach((shufflePartItem, index) => {
