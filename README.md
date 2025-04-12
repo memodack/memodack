@@ -1,4 +1,4 @@
-# Obsidian Memodack Plugin
+# Memodack
 
 ### Description
 
