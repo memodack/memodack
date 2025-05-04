@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    "alwaysStrict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "outDir": "dist",
+    "strict": true,
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["DOM", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "outDir": "./dist",
     "skipLibCheck": true,
-    "strict": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "target": "ES2015"
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "noEmit": false
   },
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.ts"]
+  "exclude": ["node_modules", "dist"]
 }
