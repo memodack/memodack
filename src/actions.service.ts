@@ -1,4 +1,5 @@
-import { IAudioService } from './audio.service';
+import { IAudioService, audioService } from './audio.service';
+
 import { TPlayVariant } from './setting-tab.service';
 
 export interface IActionsService {
@@ -14,20 +15,12 @@ export interface IActionsService {
 
 export class ActionsService implements IActionsService {
   private audioService: IAudioService;
-  private playVariant: TPlayVariant;
-  private source: string;
-  private target: string;
+  private playVariant: TPlayVariant = 'nothing';
+  private _source: string | null = null;
+  private _target: string | null = null;
 
-  constructor(
-    audioService: IAudioService,
-    playVariant: TPlayVariant,
-    source: string,
-    target: string,
-  ) {
+  constructor(audioService: IAudioService) {
     this.audioService = audioService;
-    this.playVariant = playVariant;
-    this.source = source;
-    this.target = target;
   }
 
   setPlayVariant(playVariant: TPlayVariant): void {
@@ -35,11 +28,27 @@ export class ActionsService implements IActionsService {
   }
 
   setSource(source: string): void {
-    this.source = source;
+    this._source = source;
   }
 
   setTarget(target: string): void {
-    this.target = target;
+    this._target = target;
+  }
+
+  private get source(): string {
+    if (!this._source) {
+      throw new Error('The source is not set.');
+    }
+
+    return this._source;
+  }
+
+  private get target(): string {
+    if (!this._source) {
+      throw new Error('The target is not set.');
+    }
+
+    return this._source;
   }
 
   async play(value: string, translation: string): Promise<void> {
@@ -115,3 +124,5 @@ export class ActionsService implements IActionsService {
     ]);
   }
 }
+
+export const actionsService = new ActionsService(audioService);
