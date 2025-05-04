@@ -1,6 +1,7 @@
-import { INumbersService } from './numbers.service';
+import { INumbersService, numbersService } from './numbers.service';
+import { IShuffleService, shuffleService } from './shuffle.service';
+
 import { IPart } from './parts.service';
-import { IShuffleService } from './shuffle.service';
 
 export interface IBlitz {
   correctAnswerId: number;
@@ -100,3 +101,5 @@ export class BlitzService implements IBlitzService {
     return this.blitzMap.size;
   }
 }
+
+export const blitzService = new BlitzService(shuffleService, numbersService);
