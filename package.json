@@ -11,7 +11,11 @@
     "prepare": "husky",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "start:dev": "rimraf ./dist && rollup -c -w"
+    "start:dev": "rimraf ./dist && rollup -c -w",
+    "test": "jest --forceExit"
+  },
+  "dependencies": {
+    "pretty-bytes": "^6.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -22,19 +26,20 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
+    "@types/jest": "^29.5.14",
     "clean-css": "^5.3.3",
     "eslint": "^9.23.0",
+    "eslint-plugin-jest": "^28.11.0",
     "husky": "^9.1.7",
+    "jest": "^29.7.0",
     "obsidian": "^1.8.7",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "rollup": "^4.38.0",
     "rollup-plugin-copy": "^3.5.0",
+    "ts-jest": "^29.3.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0"
-  },
-  "dependencies": {
-    "pretty-bytes": "^6.1.1"
   }
 }
