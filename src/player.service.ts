@@ -26,10 +26,18 @@ export class PlayerService implements IPlayerService {
 
       // Waiting for playback to finish
       await new Promise<void>((resolve, reject) => {
-        this.audio.addEventListener('ended', () => resolve(), { once: true });
+        this.audio.addEventListener(
+          'ended',
+          () => {
+            resolve();
+          },
+          { once: true },
+        );
         this.audio.addEventListener(
           'error',
-          () => reject(new Error('Audio playback error.')),
+          () => {
+            reject(new Error('Audio playback error.'));
+          },
           { once: true },
         );
       });

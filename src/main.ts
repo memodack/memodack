@@ -34,12 +34,13 @@ export default class MemodackPlugin extends Plugin {
   checkService!: ICheckService;
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = (await this.loadData()) as ISettings;
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
   }
 
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
-    await this.afterSaveSettings();
+    this.afterSaveSettings();
   }
 
   async onload(): Promise<void> {
@@ -47,7 +48,7 @@ export default class MemodackPlugin extends Plugin {
 
     addIcon(icon.id, icon.svg);
 
-    const cacheDirectoryPath = this.manifest?.dir
+    const cacheDirectoryPath = this.manifest.dir
       ? `${this.manifest.dir}/cache`
       : `${this.app.vault.configDir}/plugins/${this.manifest.id}/cache`;
 
@@ -110,7 +111,7 @@ export default class MemodackPlugin extends Plugin {
     );
   }
 
-  private async afterSaveSettings(): Promise<void> {
+  private afterSaveSettings(): void {
     this.playerService.setSpeed(
       parseInt(this.settings.voiceOverSpeed.replace(/\D/g, '')),
     );

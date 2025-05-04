@@ -43,28 +43,25 @@ export class ActionsService implements IActionsService {
   }
 
   async play(value: string, translation: string): Promise<void> {
-    if (this.playVariant === 'nothing') {
-      return;
-    }
+    switch (this.playVariant) {
+      case 'nothing':
+        break;
 
-    if (this.playVariant === 'value') {
-      this.playValue(value);
-      return;
-    }
+      case 'value':
+        await this.playValue(value);
+        break;
 
-    if (this.playVariant === 'translation') {
-      this.playTranslation(translation);
-      return;
-    }
+      case 'translation':
+        await this.playTranslation(translation);
+        break;
 
-    if (this.playVariant === 'value-and-translation') {
-      this.playValueAndTranslation(value, translation);
-      return;
-    }
+      case 'value-and-translation':
+        await this.playValueAndTranslation(value, translation);
+        break;
 
-    if (this.playVariant === 'translation-and-value') {
-      this.playTranslationAndValue(translation, value);
-      return;
+      case 'translation-and-value':
+        await this.playTranslationAndValue(translation, value);
+        break;
     }
   }
 

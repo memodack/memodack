@@ -28,18 +28,18 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     this.parts = parts;
   }
 
-  async onOpen(): Promise<void> {
+  onOpen(): void {
     this.blitzService.create(this.parts);
-    await this.createBlitz(0);
+    this.createBlitz(0);
   }
 
-  async onClose(): Promise<void> {
+  onClose(): void {
     this.setParts([]);
     const { contentEl } = this;
     contentEl.empty();
   }
 
-  private async createBlitz(id: number): Promise<void> {
+  private createBlitz(id: number): void {
     const blitz = this.blitzService.getBlitz(id);
 
     if (!blitz) {
@@ -56,7 +56,7 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
       this.createTextElement(blitz.text);
     }
 
-    this.actionsService.playValue(blitz.question);
+    void this.actionsService.playValue(blitz.question);
 
     let nextButtonEl: HTMLButtonElement | undefined = undefined;
     let correctOptionEl: HTMLButtonElement | undefined = undefined;
@@ -83,7 +83,7 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
         if (blitz.correctAnswerId === index) {
           answerButtonElement.addClass('correct');
-          this.actionsService.playTranslation(item);
+          void this.actionsService.playTranslation(item);
         } else {
           answerButtonElement.addClass('wrong');
           correctOptionEl?.addClass('correct');

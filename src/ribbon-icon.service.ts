@@ -40,13 +40,13 @@ export class RibbonIconService implements IRibbonIconService {
 
     let parts: IPart[] = [];
 
-    parts = await this.partsService.getSelectedParts();
+    parts = this.partsService.getSelectedParts();
 
     if (!parts.length) {
       parts = await this.partsService.getParts();
     }
 
-    if (!parts?.length) {
+    if (!parts.length) {
       new Notice('No parts provided!');
       return;
     }

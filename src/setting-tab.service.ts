@@ -28,13 +28,23 @@ export const DEFAULT_SETTINGS: Partial<ISettings> = {
 
 export class SettingTabService extends PluginSettingTab {
   plugin: MemodackPlugin;
+  private cacheSize: number = 0;
 
   constructor(app: App, plugin: MemodackPlugin) {
     super(app, plugin);
     this.plugin = plugin;
+
+    this.plugin.cacheService
+      .getSize()
+      .then((cacheSize) => {
+        this.cacheSize = cacheSize;
+      })
+      .catch(() => {
+        this.cacheSize = 0;
+      });
   }
 
-  async display(): Promise<void> {
+  display(): void {
     const { containerEl } = this;
 
     containerEl.empty();
@@ -44,15 +54,15 @@ export class SettingTabService extends PluginSettingTab {
     new Setting(containerEl)
       .setName('API Key')
       .setDesc('API key for translation and text-to-speech services.')
-      .addText((text) =>
+      .addText((text) => {
         text
-          .setValue(this.plugin.settings?.apiKey || '')
+          .setValue(this.plugin.settings.apiKey || '')
           .onChange(async (value) => {
             this.plugin.settings.apiKey = value;
             await this.plugin.saveSettings();
           })
-          .inputEl.setAttribute('type', 'password'),
-      );
+          .inputEl.setAttribute('type', 'password');
+      });
 
     new Setting(containerEl)
       .setName('Connection')
@@ -61,8 +71,8 @@ export class SettingTabService extends PluginSettingTab {
         btn
           .setButtonText('Check')
           .setCta()
-          .onClick(() => {
-            this.check();
+          .onClick(async () => {
+            await this.check();
           }),
       );
 
@@ -124,9 +134,7 @@ export class SettingTabService extends PluginSettingTab {
             nothing: 'Nothing',
             value: 'Value',
             translation: 'Translation',
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             'value-and-translation': 'Value + Translation',
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             'translation-and-value': 'Translation + Value',
           })
           .setValue(this.plugin.settings.playVariant)
@@ -138,30 +146,28 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl).setName('Optimization').setHeading();
 
-    const cacheSize = await this.plugin.cacheService.getSize();
-
     const cacheSetting = new Setting(containerEl)
       .setName('Cache')
-      .setDesc(`${prettyBytes(cacheSize)}.`)
+      .setDesc(`${prettyBytes(this.cacheSize)}.`)
       .addButton((btn) =>
         btn
           .setButtonText('Clear')
           .setCta()
-          .onClick(() => {
-            this.plugin.cacheService.clear();
+          .onClick(async () => {
+            await this.plugin.cacheService.clear();
             cacheSetting.setDesc(prettyBytes(0));
           }),
       );
   }
 
   private async check(): Promise<void> {
-    const apiKey = this.plugin.settings?.apiKey;
+    const apiKey = this.plugin.settings.apiKey;
 
     if (!apiKey) {
       new Notice('No API key entered.');
       return;
     }
 
-    this.plugin.checkService.check();
+    await this.plugin.checkService.check();
   }
 }

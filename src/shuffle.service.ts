@@ -7,7 +7,7 @@ export class ShuffleService implements IShuffleService {
    * Shuffles the elements of an array using the Fisher-Yates algorithm.
    */
   shuffle<T>(array: T[]): T[] {
-    if (array == null) {
+    if (!Array.isArray(array)) {
       throw new Error('Input array cannot be null or undefined.');
     }
 

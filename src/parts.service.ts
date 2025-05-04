@@ -8,7 +8,7 @@ export interface IPart {
 
 export interface IPartsService {
   getParts(): Promise<IPart[]>;
-  getSelectedParts(): Promise<IPart[]>;
+  getSelectedParts(): IPart[];
 }
 
 export class PartsService implements IPartsService {
@@ -71,7 +71,7 @@ export class PartsService implements IPartsService {
     return parts;
   }
 
-  async getSelectedParts(): Promise<IPart[]> {
+  getSelectedParts(): IPart[] {
     const activeFile = this.app.workspace.getActiveFile();
 
     if (!activeFile) {
@@ -97,6 +97,11 @@ export class PartsService implements IPartsService {
           const afterText = span.nextSibling?.textContent?.trim() || '';
 
           const value = span.textContent;
+
+          if (!value) {
+            return;
+          }
+
           const translation = span.getAttribute('data-translation');
 
           const text = `${beforeText} ${value} ${afterText}`.trim();

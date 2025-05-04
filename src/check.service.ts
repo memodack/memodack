@@ -19,8 +19,8 @@ export class CheckService implements ICheckService {
   }
 
   async check(): Promise<void> {
-    this.checkTranslation();
-    this.checkTts();
+    await this.checkTranslation();
+    await this.checkTts();
   }
 
   async checkTranslation(): Promise<void> {
