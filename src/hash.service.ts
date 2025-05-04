@@ -21,3 +21,5 @@ export class HashService implements IHashService {
     return hashHex;
   }
 }
+
+export const hashService = new HashService();
