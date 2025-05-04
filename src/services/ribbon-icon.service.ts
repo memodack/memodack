@@ -2,7 +2,7 @@ import { App, MarkdownView, Notice } from 'obsidian';
 import { IPart, IPartsService } from './parts.service';
 
 import { BlitzModalService } from './blitz-modal.service';
-import { icon } from './icon';
+import { icon } from '../icon';
 
 export interface IRibbonIconService {
   id: string;

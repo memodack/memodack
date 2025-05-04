@@ -1,21 +1,21 @@
 import {
+  BlitzModalService,
   DEFAULT_SETTINGS,
   ISettings,
+  PartsService,
+  RibbonIconService,
   SettingTabService,
-} from './setting-tab.service';
+  actionsService,
+  blitzService,
+  cacheService,
+  checkService,
+  mppService,
+  translateCommandService,
+  triggerSettingsService,
+} from './services';
 import { Plugin, addIcon } from 'obsidian';
 
-import { BlitzModalService } from './blitz-modal.service';
-import { PartsService } from './parts.service';
-import { RibbonIconService } from './ribbon-icon.service';
-import { actionsService } from './actions.service';
-import { blitzService } from './blitz.service';
-import { cacheService } from './cache.service';
-import { checkService } from './check.service';
 import { icon } from './icon';
-import { mppService } from './mpp.service';
-import { translateCommandService } from './translate-command.service';
-import { triggerSettingsService } from './trigger-settings.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
