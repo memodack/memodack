@@ -29,11 +29,13 @@ export default class MemodackPlugin extends Plugin {
 
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
-    this.afterSaveSettings();
+    this.triggerSettings();
   }
 
   async onload(): Promise<void> {
     await this.loadSettings();
+
+    this.triggerSettings();
 
     addIcon(icon.id, icon.svg);
 
@@ -47,17 +49,6 @@ export default class MemodackPlugin extends Plugin {
       checkService,
     );
     const partsService = new PartsService(this.app);
-
-    ttsService.setApiKey(this.settings.apiKey);
-    ttsService.setSource(this.settings.source);
-
-    translationService.setApiKey(this.settings.apiKey);
-    translationService.setSource(this.settings.source);
-    translationService.setTarget(this.settings.target);
-
-    actionsService.setPlayVariant(this.settings.playVariant);
-    actionsService.setSource(this.settings.source);
-    actionsService.setTarget(this.settings.target);
 
     const blitzModalService = new BlitzModalService(
       this.app,
@@ -81,7 +72,7 @@ export default class MemodackPlugin extends Plugin {
     );
   }
 
-  private afterSaveSettings(): void {
+  private triggerSettings(): void {
     playerService.setSpeed(
       parseInt(this.settings.voiceOverSpeed.replace(/\D/g, '')),
     );
