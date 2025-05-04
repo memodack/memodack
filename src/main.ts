@@ -8,7 +8,6 @@ import { Plugin, addIcon } from 'obsidian';
 
 import { BlitzModalService } from './blitz-modal.service';
 import { BlitzService } from './blitz.service';
-import { MppService } from './mpp.service';
 import { NumbersService } from './numbers.service';
 import { PartsService } from './parts.service';
 import { RibbonIconService } from './ribbon-icon.service';
@@ -16,6 +15,7 @@ import { ShuffleService } from './shuffle.service';
 import { actionsService } from './actions.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
+import { mppService } from './mpp.service';
 import { playerService } from './player.service';
 import { translateCommandService } from './translate-command.service';
 import { translationService } from './translation.service';
@@ -61,7 +61,6 @@ export default class MemodackPlugin extends Plugin {
     actionsService.setSource(this.settings.source);
     actionsService.setTarget(this.settings.target);
 
-    const mppService = new MppService(actionsService);
     const partsService = new PartsService(this.app);
     const shuffleService = new ShuffleService();
     const numbersService = new NumbersService();
