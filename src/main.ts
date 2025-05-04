@@ -14,10 +14,8 @@ import { cacheService } from './cache.service';
 import { checkService } from './check.service';
 import { icon } from './icon';
 import { mppService } from './mpp.service';
-import { playerService } from './player.service';
 import { translateCommandService } from './translate-command.service';
-import { translationService } from './translation.service';
-import { ttsService } from './tts.service';
+import { triggerSettingsService } from './trigger-settings.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
@@ -48,6 +46,7 @@ export default class MemodackPlugin extends Plugin {
       cacheService,
       checkService,
     );
+
     const partsService = new PartsService(this.app);
 
     const blitzModalService = new BlitzModalService(
@@ -73,20 +72,13 @@ export default class MemodackPlugin extends Plugin {
   }
 
   private triggerSettings(): void {
-    playerService.setSpeed(
-      parseInt(this.settings.voiceOverSpeed.replace(/\D/g, '')),
-    );
-
-    ttsService.setApiKey(this.settings.apiKey);
-    ttsService.setSource(this.settings.source);
-
-    translationService.setApiKey(this.settings.apiKey);
-    translationService.setSource(this.settings.source);
-    translationService.setTarget(this.settings.target);
-
-    actionsService.setPlayVariant(this.settings.playVariant);
-    actionsService.setSource(this.settings.source);
-    actionsService.setTarget(this.settings.target);
+    triggerSettingsService.trigger({
+      voiceOverSpeed: this.settings.voiceOverSpeed,
+      apiKey: this.settings.apiKey,
+      source: this.settings.source,
+      target: this.settings.target,
+      playVariant: this.settings.playVariant,
+    });
   }
 
   private getCacheDirectoryPath(): string {
