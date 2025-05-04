@@ -25,3 +25,5 @@ export class ShuffleService implements IShuffleService {
     return shuffled;
   }
 }
+
+export const shuffleService = new ShuffleService();
