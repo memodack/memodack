@@ -51,11 +51,11 @@ export default tseslint.config(
   {
     ignores: [
       'dist',
-      'rollup.config.mjs',
       'eslint.config.mjs',
       'commitlint.config.mjs',
       'prettier.config.mjs',
       'jest.config.mjs',
+      'esbuild.config.mjs',
     ],
   },
 );
