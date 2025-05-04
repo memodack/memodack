@@ -7,7 +7,6 @@ import {
 } from './setting-tab.service';
 import { Plugin, addIcon } from 'obsidian';
 
-import { AudioService } from './audio.service';
 import { BlitzModalService } from './blitz-modal.service';
 import { BlitzService } from './blitz.service';
 import { MppService } from './mpp.service';
@@ -16,8 +15,8 @@ import { PartsService } from './parts.service';
 import { RibbonIconService } from './ribbon-icon.service';
 import { ShuffleService } from './shuffle.service';
 import { TranslateCommandService } from './translate-command.service';
+import { audioService } from './audio.service';
 import { cacheService } from './cache.service';
-import { hashService } from './hash.service';
 import { icon } from './icon';
 import { playerService } from './player.service';
 import { translationService } from './translation.service';
@@ -60,12 +59,6 @@ export default class MemodackPlugin extends Plugin {
     translationService.setSource(this.settings.source);
     translationService.setTarget(this.settings.target);
 
-    const audioService = new AudioService(
-      cacheService,
-      playerService,
-      ttsService,
-      hashService,
-    );
     this.actionsService = new ActionsService(
       audioService,
       this.settings.playVariant,

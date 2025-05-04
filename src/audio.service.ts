@@ -1,7 +1,7 @@
-import { ICacheService } from './cache.service';
-import { IHashService } from './hash.service';
-import { IPlayerService } from './player.service';
-import { ITtsService } from './tts.service';
+import { ICacheService, cacheService } from './cache.service';
+import { IHashService, hashService } from './hash.service';
+import { IPlayerService, playerService } from './player.service';
+import { ITtsService, ttsService } from './tts.service';
 
 export interface IAudioService {
   play(args: { source: string; value: string }[]): Promise<void>;
@@ -63,3 +63,10 @@ export class AudioService implements IAudioService {
     return `data:audio/wav;base64,${audioUrl}`;
   }
 }
+
+export const audioService = new AudioService(
+  cacheService,
+  playerService,
+  ttsService,
+  hashService,
+);
