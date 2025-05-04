@@ -5,7 +5,6 @@ import {
   ISettings,
   SettingTabService,
 } from './setting-tab.service';
-import { ITranslationService, TranslationService } from './translation.service';
 import { Plugin, addIcon } from 'obsidian';
 
 import { AudioService } from './audio.service';
@@ -21,13 +20,13 @@ import { TranslateCommandService } from './translate-command.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
 import { playerService } from './player.service';
+import { translationService } from './translation.service';
 import { ttsService } from './tts.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
 
   actionsService!: IActionsService;
-  translationService!: ITranslationService;
   checkService!: ICheckService;
 
   async loadSettings(): Promise<void> {
@@ -57,11 +56,10 @@ export default class MemodackPlugin extends Plugin {
     ttsService.setApiKey(this.settings.apiKey);
     ttsService.setSource(this.settings.source);
 
-    this.translationService = new TranslationService(
-      this.settings.apiKey,
-      this.settings.source,
-      this.settings.target,
-    );
+    translationService.setApiKey(this.settings.apiKey);
+    translationService.setSource(this.settings.source);
+    translationService.setTarget(this.settings.target);
+
     const hashService = new HashService();
     const audioService = new AudioService(
       cacheService,
@@ -76,7 +74,7 @@ export default class MemodackPlugin extends Plugin {
       this.settings.target,
     );
     const translateCommandService = new TranslateCommandService(
-      this.translationService,
+      translationService,
       this.actionsService,
     );
     const mppService = new MppService(this.actionsService);
@@ -94,7 +92,7 @@ export default class MemodackPlugin extends Plugin {
       partsService,
       blitzModalService,
     );
-    this.checkService = new CheckService(this.translationService, ttsService);
+    this.checkService = new CheckService(translationService, ttsService);
 
     this.addSettingTab(settingTabService);
     this.addCommand(translateCommandService);
@@ -114,9 +112,9 @@ export default class MemodackPlugin extends Plugin {
     ttsService.setApiKey(this.settings.apiKey);
     ttsService.setSource(this.settings.source);
 
-    this.translationService.setApiKey(this.settings.apiKey);
-    this.translationService.setSource(this.settings.source);
-    this.translationService.setTarget(this.settings.target);
+    translationService.setApiKey(this.settings.apiKey);
+    translationService.setSource(this.settings.source);
+    translationService.setTarget(this.settings.target);
 
     this.actionsService.setPlayVariant(this.settings.playVariant);
     this.actionsService.setSource(this.settings.source);
