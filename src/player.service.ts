@@ -4,7 +4,7 @@ export interface IPlayerService {
 }
 
 export class PlayerService implements IPlayerService {
-  private audio = new Audio();
+  private readonly audio = new Audio();
   private speed = 1;
 
   setSpeed(speed: number): void {
@@ -53,3 +53,5 @@ export class PlayerService implements IPlayerService {
     }
   }
 }
+
+export const playerService = new PlayerService();

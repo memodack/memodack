@@ -5,7 +5,6 @@ import {
   ISettings,
   SettingTabService,
 } from './setting-tab.service';
-import { IPlayerService, PlayerService } from './player.service';
 import { ITranslationService, TranslationService } from './translation.service';
 import { ITtsService, TtsService } from './tts.service';
 import { Plugin, addIcon } from 'obsidian';
@@ -22,11 +21,11 @@ import { ShuffleService } from './shuffle.service';
 import { TranslateCommandService } from './translate-command.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
+import { playerService } from './player.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
 
-  playerService!: IPlayerService;
   ttsService!: ITtsService;
   actionsService!: IActionsService;
   translationService!: ITranslationService;
@@ -50,7 +49,6 @@ export default class MemodackPlugin extends Plugin {
     cacheService.setVault(this.app.vault);
     cacheService.setDirectoryPath(this.getCacheDirectoryPath());
 
-    this.playerService = new PlayerService();
     const settingTabService = new SettingTabService(
       this.app,
       this,
@@ -69,7 +67,7 @@ export default class MemodackPlugin extends Plugin {
     const hashService = new HashService();
     const audioService = new AudioService(
       cacheService,
-      this.playerService,
+      playerService,
       this.ttsService,
       hashService,
     );
@@ -114,7 +112,7 @@ export default class MemodackPlugin extends Plugin {
   }
 
   private afterSaveSettings(): void {
-    this.playerService.setSpeed(
+    playerService.setSpeed(
       parseInt(this.settings.voiceOverSpeed.replace(/\D/g, '')),
     );
 
