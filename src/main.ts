@@ -19,6 +19,10 @@ import { icon } from './icon';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
+  settingTabService!: SettingTabService;
+  partsService!: PartsService;
+  blitzModalService!: BlitzModalService;
+  ribbonIconService!: RibbonIconService;
 
   async loadSettings(): Promise<void> {
     const loadedData = (await this.loadData()) as ISettings;
@@ -40,34 +44,18 @@ export default class MemodackPlugin extends Plugin {
     cacheService.setVault(this.app.vault);
     cacheService.setDirectoryPath(this.getCacheDirectoryPath());
 
-    const settingTabService = new SettingTabService(
-      this.app,
-      this,
-      cacheService,
-      checkService,
-    );
+    this.createSettingTabService();
+    this.createPartsService();
+    this.createBlitzModalService();
+    this.createRibbonIconService();
 
-    const partsService = new PartsService(this.app);
-
-    const blitzModalService = new BlitzModalService(
-      this.app,
-      actionsService,
-      blitzService,
-    );
-
-    const ribbonIconService = new RibbonIconService(
-      this.app,
-      partsService,
-      blitzModalService,
-    );
-
-    this.addSettingTab(settingTabService);
+    this.addSettingTab(this.settingTabService);
     this.addCommand(translateCommandService);
     this.registerMarkdownPostProcessor(mppService.postProcessor);
     this.addRibbonIcon(
-      ribbonIconService.id,
-      ribbonIconService.title,
-      ribbonIconService.callback,
+      this.ribbonIconService.id,
+      this.ribbonIconService.title,
+      this.ribbonIconService.callback,
     );
   }
 
@@ -85,5 +73,34 @@ export default class MemodackPlugin extends Plugin {
     return this.manifest.dir
       ? `${this.manifest.dir}/cache`
       : `${this.app.vault.configDir}/plugins/${this.manifest.id}/cache`;
+  }
+
+  private createSettingTabService(): void {
+    this.settingTabService = new SettingTabService(
+      this.app,
+      this,
+      cacheService,
+      checkService,
+    );
+  }
+
+  private createPartsService(): void {
+    this.partsService = new PartsService(this.app);
+  }
+
+  private createBlitzModalService(): void {
+    this.blitzModalService = new BlitzModalService(
+      this.app,
+      actionsService,
+      blitzService,
+    );
+  }
+
+  private createRibbonIconService(): void {
+    this.ribbonIconService = new RibbonIconService(
+      this.app,
+      this.partsService,
+      this.blitzModalService,
+    );
   }
 }
