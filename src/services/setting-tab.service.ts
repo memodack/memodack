@@ -1,17 +1,10 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
+import { TPlayVariant, TPlugin } from '../types';
 
 import { ICacheService } from './cache.service';
 import { ICheckService } from './check.service';
-import MemodackPlugin from './main';
-import { languages } from './languages';
+import { languages } from '../languages';
 import prettyBytes from 'pretty-bytes';
-
-export type TPlayVariant =
-  | 'nothing'
-  | 'value'
-  | 'translation'
-  | 'value-and-translation'
-  | 'translation-and-value';
 
 export interface ISettings {
   source: string;
@@ -29,14 +22,14 @@ export const DEFAULT_SETTINGS: Partial<ISettings> = {
 };
 
 export class SettingTabService extends PluginSettingTab {
-  private readonly plugin: MemodackPlugin;
+  private readonly plugin: TPlugin;
   private readonly cacheService: ICacheService;
   private readonly checkService: ICheckService;
   private cacheSize: number = 0;
 
   constructor(
     app: App,
-    plugin: MemodackPlugin,
+    plugin: TPlugin,
     cacheService: ICacheService,
     checkService: ICheckService,
   ) {

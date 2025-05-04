@@ -3,7 +3,7 @@ import { IPlayerService, playerService } from './player.service';
 import { ITranslationService, translationService } from './translation.service';
 import { ITtsService, ttsService } from './tts.service';
 
-import { TPlayVariant } from './setting-tab.service';
+import { TPlayVariant } from '../types';
 
 type TArgs = {
   apiKey?: string;

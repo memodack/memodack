@@ -1,6 +1,6 @@
 import { IAudioService, audioService } from './audio.service';
 
-import { TPlayVariant } from './setting-tab.service';
+import { TPlayVariant } from '../types';
 
 export interface IActionsService {
   setPlayVariant(playVariant: TPlayVariant): void;
