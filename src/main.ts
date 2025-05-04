@@ -6,7 +6,6 @@ import {
   SettingTabService,
 } from './setting-tab.service';
 import { ITranslationService, TranslationService } from './translation.service';
-import { ITtsService, TtsService } from './tts.service';
 import { Plugin, addIcon } from 'obsidian';
 
 import { AudioService } from './audio.service';
@@ -22,11 +21,11 @@ import { TranslateCommandService } from './translate-command.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
 import { playerService } from './player.service';
+import { ttsService } from './tts.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
 
-  ttsService!: ITtsService;
   actionsService!: IActionsService;
   translationService!: ITranslationService;
   checkService!: ICheckService;
@@ -55,10 +54,9 @@ export default class MemodackPlugin extends Plugin {
       cacheService,
     );
 
-    this.ttsService = new TtsService(
-      this.settings.apiKey,
-      this.settings.source,
-    );
+    ttsService.setApiKey(this.settings.apiKey);
+    ttsService.setSource(this.settings.source);
+
     this.translationService = new TranslationService(
       this.settings.apiKey,
       this.settings.source,
@@ -68,7 +66,7 @@ export default class MemodackPlugin extends Plugin {
     const audioService = new AudioService(
       cacheService,
       playerService,
-      this.ttsService,
+      ttsService,
       hashService,
     );
     this.actionsService = new ActionsService(
@@ -96,10 +94,7 @@ export default class MemodackPlugin extends Plugin {
       partsService,
       blitzModalService,
     );
-    this.checkService = new CheckService(
-      this.translationService,
-      this.ttsService,
-    );
+    this.checkService = new CheckService(this.translationService, ttsService);
 
     this.addSettingTab(settingTabService);
     this.addCommand(translateCommandService);
@@ -116,8 +111,8 @@ export default class MemodackPlugin extends Plugin {
       parseInt(this.settings.voiceOverSpeed.replace(/\D/g, '')),
     );
 
-    this.ttsService.setApiKey(this.settings.apiKey);
-    this.ttsService.setSource(this.settings.source);
+    ttsService.setApiKey(this.settings.apiKey);
+    ttsService.setSource(this.settings.source);
 
     this.translationService.setApiKey(this.settings.apiKey);
     this.translationService.setSource(this.settings.source);

@@ -11,20 +11,31 @@ export interface ITtsService {
 }
 
 export class TtsService implements ITtsService {
-  private apiKey: string;
-  private source: string;
-
-  constructor(apiKey: string, source: string) {
-    this.apiKey = apiKey;
-    this.source = source;
-  }
+  private _apiKey: string | null = null;
+  private _source: string | null = null;
 
   setApiKey(apiKey: string): void {
-    this.apiKey = apiKey;
+    this._apiKey = apiKey;
   }
 
   setSource(source: string): void {
-    this.source = source;
+    this._source = source;
+  }
+
+  private get apiKey(): string {
+    if (!this._apiKey) {
+      throw new Error(' The api key is not set.');
+    }
+
+    return this._apiKey;
+  }
+
+  private get source(): string {
+    if (!this._source) {
+      throw new Error(' The source is not set.');
+    }
+
+    return this._source;
   }
 
   async tts(value: string): Promise<string | null> {
@@ -51,15 +62,12 @@ export class TtsService implements ITtsService {
 
       return json.audioContent || null;
     } catch (e) {
-      const errorMessage = 'Failed to process TTS.';
-
-      if (e instanceof Error) {
-        console.error(e.message || errorMessage);
-        return null;
-      }
-
-      console.error(errorMessage);
+      console.error(
+        `Failed to process TTS. ${e instanceof Error ? e.message : ''}`,
+      );
       return null;
     }
   }
 }
+
+export const ttsService = new TtsService();
