@@ -1,7 +1,6 @@
 import { Command, Editor } from 'obsidian';
-
-import { IActionsService } from './actions.service';
-import { ITranslationService } from './translation.service';
+import { IActionsService, actionsService } from './actions.service';
+import { ITranslationService, translationService } from './translation.service';
 
 export class TranslateCommandService implements Command {
   id = 'translate';
@@ -30,3 +29,8 @@ export class TranslateCommandService implements Command {
     await this.actionService.playValueAndTranslation(selection, translation);
   }
 }
+
+export const translateCommandService = new TranslateCommandService(
+  translationService,
+  actionsService,
+);
