@@ -1,4 +1,3 @@
-import { ActionsService, IActionsService } from './actions.service';
 import { CheckService, ICheckService } from './check.service';
 import {
   DEFAULT_SETTINGS,
@@ -15,7 +14,7 @@ import { PartsService } from './parts.service';
 import { RibbonIconService } from './ribbon-icon.service';
 import { ShuffleService } from './shuffle.service';
 import { TranslateCommandService } from './translate-command.service';
-import { audioService } from './audio.service';
+import { actionsService } from './actions.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
 import { playerService } from './player.service';
@@ -25,7 +24,6 @@ import { ttsService } from './tts.service';
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
 
-  actionsService!: IActionsService;
   checkService!: ICheckService;
 
   async loadSettings(): Promise<void> {
@@ -59,24 +57,22 @@ export default class MemodackPlugin extends Plugin {
     translationService.setSource(this.settings.source);
     translationService.setTarget(this.settings.target);
 
-    this.actionsService = new ActionsService(
-      audioService,
-      this.settings.playVariant,
-      this.settings.source,
-      this.settings.target,
-    );
+    actionsService.setPlayVariant(this.settings.playVariant);
+    actionsService.setSource(this.settings.source);
+    actionsService.setTarget(this.settings.target);
+
     const translateCommandService = new TranslateCommandService(
       translationService,
-      this.actionsService,
+      actionsService,
     );
-    const mppService = new MppService(this.actionsService);
+    const mppService = new MppService(actionsService);
     const partsService = new PartsService(this.app);
     const shuffleService = new ShuffleService();
     const numbersService = new NumbersService();
     const blitzService = new BlitzService(shuffleService, numbersService);
     const blitzModalService = new BlitzModalService(
       this.app,
-      this.actionsService,
+      actionsService,
       blitzService,
     );
     const ribbonIconService = new RibbonIconService(
@@ -108,9 +104,9 @@ export default class MemodackPlugin extends Plugin {
     translationService.setSource(this.settings.source);
     translationService.setTarget(this.settings.target);
 
-    this.actionsService.setPlayVariant(this.settings.playVariant);
-    this.actionsService.setSource(this.settings.source);
-    this.actionsService.setTarget(this.settings.target);
+    actionsService.setPlayVariant(this.settings.playVariant);
+    actionsService.setSource(this.settings.source);
+    actionsService.setTarget(this.settings.target);
   }
 
   private getCacheDirectoryPath(): string {
