@@ -1,5 +1,9 @@
 import { requestUrl } from 'obsidian';
 
+interface ITtsResponse {
+  audioContent: string;
+}
+
 export interface ITtsService {
   setApiKey(apiKey: string): void;
   setSource(source: string): void;
@@ -36,19 +40,14 @@ export class TtsService implements ITtsService {
         audioConfig: { audioEncoding: 'MP3' },
       };
 
-      const response = await requestUrl({
+      const response = (await requestUrl({
         method: 'POST',
         url,
         contentType: 'application/json',
         body: JSON.stringify(requestBody),
-      });
+      })) as { json: Promise<ITtsResponse> };
 
       const json = await response.json;
-
-      if (!json?.audioContent) {
-        console.error('Missing the audioContent property.');
-        return null;
-      }
 
       return json.audioContent || null;
     } catch (e) {

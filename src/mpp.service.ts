@@ -18,7 +18,7 @@ export class MppService implements IMppService {
     let node;
 
     while ((node = walker.nextNode())) {
-      if (node?.nodeValue && node.nodeValue.match(/\{.*?\|.*?\}/)) {
+      if (node.nodeValue && node.nodeValue.match(/\{.*?\|.*?\}/)) {
         nodesToReplace.push(node);
       }
     }
@@ -28,7 +28,7 @@ export class MppService implements IMppService {
     }
 
     nodesToReplace.forEach((node) => {
-      if (!node?.nodeValue) {
+      if (!node.nodeValue) {
         return;
       }
 
@@ -40,7 +40,7 @@ export class MppService implements IMppService {
         const match = part.match(/\{(.*?)\|(.*?)\}/);
 
         if (match) {
-          if (!match?.length || !match[1] || !match[2]) {
+          if (!match.length || !match[1] || !match[2]) {
             return;
           }
 
@@ -51,7 +51,6 @@ export class MppService implements IMppService {
             cls: 'memodack___syntax',
             text: value,
             attr: {
-              // eslint-disable-next-line @typescript-eslint/naming-convention
               'data-translation': match[2],
             },
           });

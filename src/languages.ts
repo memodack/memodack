@@ -1,6 +1,5 @@
 export const languages = {
   en: 'English',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   'zh-CN': 'Mandarin Chinese',
   hi: 'Hindi',
   es: 'Spanish',

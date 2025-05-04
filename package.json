@@ -24,7 +24,6 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "clean-css": "^5.3.3",
     "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
     "husky": "^9.1.7",
     "obsidian": "^1.8.7",
     "prettier": "^3.5.3",

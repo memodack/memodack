@@ -1,56 +1,38 @@
-import eslintJs from '@eslint/js';
-import prettier from 'eslint-config-prettier/flat';
+import eslint from '@eslint/js';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  eslintJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.stylistic,
+  // Basic JS and TS rules
+  eslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
+
+  // Language settings for regular code (without jest!)
   {
-    files: ['**/*.{ts}'],
     languageOptions: {
-      parser: tseslint.parser,
+      globals: globals.node,
       parserOptions: {
-        project: './tsconfig.json',
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin,
-    },
   },
+
+  // Strict TypeScript rules
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
-      '@typescript-eslint/no-inferrable-types': 'error',
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: 'default',
-          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-          leadingUnderscore: 'allow',
-          trailingUnderscore: 'allow',
-        },
-      ],
-      '@typescript-eslint/prefer-as-const': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
-      '@typescript-eslint/no-empty-interface': 'error',
-      '@typescript-eslint/no-empty-function': 'error',
-      '@typescript-eslint/no-this-alias': 'error',
-      strict: ['error', 'global'],
-      '@typescript-eslint/no-namespace': 'off',
     },
   },
+
+  // Ignored files
   {
     ignores: [
-      'node_modules',
       'dist',
-      'eslint.config.mjs',
-      'prettier.config.mjs',
       'rollup.config.mjs',
+      'eslint.config.mjs',
+      'commitlint.config.mjs',
+      'prettier.config.mjs',
     ],
   },
-  prettier,
 );

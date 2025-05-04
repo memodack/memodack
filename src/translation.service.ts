@@ -1,5 +1,15 @@
 import { requestUrl } from 'obsidian';
 
+interface ITransactionResponse {
+  data: {
+    translations: [
+      {
+        translatedText: string;
+      },
+    ];
+  };
+}
+
 export interface ITranslationService {
   setApiKey(apiKey: string): void;
   setSource(source: string): void;
@@ -41,21 +51,16 @@ export class TranslationService implements ITranslationService {
         format: 'text',
       };
 
-      const response = await requestUrl({
+      const response = (await requestUrl({
         method: 'POST',
         url,
         contentType: 'application/json',
         body: JSON.stringify(requestBody),
-      });
+      })) as { json: Promise<ITransactionResponse> };
 
       const json = await response.json;
 
-      if (!json?.data?.translations) {
-        console.error('Missing the translations property.');
-        return null;
-      }
-
-      return json.data.translations[0]?.translatedText || null;
+      return json.data.translations[0].translatedText || null;
     } catch (e) {
       const errorMessage = 'Failed to process translation.';
 
