@@ -44,3 +44,5 @@ export class NumbersService implements NumbersService {
     return result;
   }
 }
+
+export const numbersService = new NumbersService();
