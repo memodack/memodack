@@ -11,12 +11,12 @@ import { BlitzService } from './blitz.service';
 import { NumbersService } from './numbers.service';
 import { PartsService } from './parts.service';
 import { RibbonIconService } from './ribbon-icon.service';
-import { ShuffleService } from './shuffle.service';
 import { actionsService } from './actions.service';
 import { cacheService } from './cache.service';
 import { icon } from './icon';
 import { mppService } from './mpp.service';
 import { playerService } from './player.service';
+import { shuffleService } from './shuffle.service';
 import { translateCommandService } from './translate-command.service';
 import { translationService } from './translation.service';
 import { ttsService } from './tts.service';
@@ -49,6 +49,7 @@ export default class MemodackPlugin extends Plugin {
       this,
       cacheService,
     );
+    const partsService = new PartsService(this.app);
 
     ttsService.setApiKey(this.settings.apiKey);
     ttsService.setSource(this.settings.source);
@@ -61,8 +62,6 @@ export default class MemodackPlugin extends Plugin {
     actionsService.setSource(this.settings.source);
     actionsService.setTarget(this.settings.target);
 
-    const partsService = new PartsService(this.app);
-    const shuffleService = new ShuffleService();
     const numbersService = new NumbersService();
     const blitzService = new BlitzService(shuffleService, numbersService);
     const blitzModalService = new BlitzModalService(
