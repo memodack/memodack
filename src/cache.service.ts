@@ -1,6 +1,8 @@
 import { Vault } from 'obsidian';
 
 export interface ICacheService {
+  setVault(vault: Vault): void;
+  setDirectoryPath(directoryPath: string): void;
   add(key: string, value: string): Promise<void>;
   get(key: string): Promise<string | null>;
   getSize(): Promise<number>;
@@ -8,12 +10,31 @@ export interface ICacheService {
 }
 
 export class CacheService implements ICacheService {
-  private vault: Vault;
-  private directoryPath: string;
+  private _vault: Vault | null = null;
+  private _directoryPath: string | null = null;
 
-  constructor(vault: Vault, directoryPath: string) {
-    this.vault = vault;
-    this.directoryPath = directoryPath;
+  setVault(vault: Vault): void {
+    this._vault = vault;
+  }
+
+  setDirectoryPath(directoryPath: string): void {
+    this._directoryPath = directoryPath;
+  }
+
+  private get vault(): Vault {
+    if (!this._vault) {
+      throw new Error('The vault is not set.');
+    }
+
+    return this._vault;
+  }
+
+  private get directoryPath(): string {
+    if (!this._directoryPath) {
+      throw new Error('The directory path is not set.');
+    }
+
+    return this._directoryPath;
   }
 
   async add(key: string, value: string): Promise<void> {
@@ -26,14 +47,8 @@ export class CacheService implements ICacheService {
         await this.vault.adapter.write(`${this.directoryPath}/${key}`, value);
       }
     } catch (e) {
-      const errorMessage = `Failed to add cache for key ${key}.`;
-
-      if (e instanceof Error) {
-        console.error(e.message || errorMessage);
-        return;
-      }
-
-      console.error(errorMessage);
+      const errorMessage = `Failed to add cache for key '${key}'.`;
+      console.error(errorMessage, e instanceof Error ? e.message : '');
     }
   }
 
@@ -45,14 +60,9 @@ export class CacheService implements ICacheService {
 
       return await this.vault.adapter.read(`${this.directoryPath}/${key}`);
     } catch (e) {
-      const errorMessage = `Failed to get a cache by ${key} key.`;
+      const errorMessage = `Failed to get a cache by '${key}' key.`;
+      console.error(errorMessage, e instanceof Error ? e.message : '');
 
-      if (e instanceof Error) {
-        console.error(e.message || errorMessage);
-        return null;
-      }
-
-      console.error(errorMessage);
       return null;
     }
   }
@@ -76,14 +86,10 @@ export class CacheService implements ICacheService {
 
       return totalSize;
     } catch (e) {
-      const errorMessage = 'Failed to retrieve the cache directory size.';
+      console.error(
+        `Failed to retrieve the cache directory size. ${e instanceof Error ? e.message : ''}`,
+      );
 
-      if (e instanceof Error) {
-        console.error(e.message || errorMessage);
-        return 0;
-      }
-
-      console.error(errorMessage);
       return 0;
     }
   }
@@ -96,14 +102,11 @@ export class CacheService implements ICacheService {
 
       await this.vault.adapter.rmdir(this.directoryPath, true);
     } catch (e) {
-      const errorMessage = 'Failed to clear the cache.';
-
-      if (e instanceof Error) {
-        console.error(e.message || errorMessage);
-        return;
-      }
-
-      console.error(errorMessage);
+      console.error(
+        `Failed to clear the cache. ${e instanceof Error ? e.message : ''}`,
+      );
     }
   }
 }
+
+export const cacheService = new CacheService();

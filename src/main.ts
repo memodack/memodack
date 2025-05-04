@@ -1,5 +1,4 @@
 import { ActionsService, IActionsService } from './actions.service';
-import { CacheService, ICacheService } from './cache.service';
 import { CheckService, ICheckService } from './check.service';
 import {
   DEFAULT_SETTINGS,
@@ -21,12 +20,12 @@ import { PartsService } from './parts.service';
 import { RibbonIconService } from './ribbon-icon.service';
 import { ShuffleService } from './shuffle.service';
 import { TranslateCommandService } from './translate-command.service';
+import { cacheService } from './cache.service';
 import { icon } from './icon';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
 
-  cacheService!: ICacheService;
   playerService!: IPlayerService;
   ttsService!: ITtsService;
   actionsService!: IActionsService;
@@ -48,13 +47,16 @@ export default class MemodackPlugin extends Plugin {
 
     addIcon(icon.id, icon.svg);
 
-    const cacheDirectoryPath = this.manifest.dir
-      ? `${this.manifest.dir}/cache`
-      : `${this.app.vault.configDir}/plugins/${this.manifest.id}/cache`;
+    cacheService.setVault(this.app.vault);
+    cacheService.setDirectoryPath(this.getCacheDirectoryPath());
 
-    this.cacheService = new CacheService(this.app.vault, cacheDirectoryPath);
     this.playerService = new PlayerService();
-    const settingTabService = new SettingTabService(this.app, this);
+    const settingTabService = new SettingTabService(
+      this.app,
+      this,
+      cacheService,
+    );
+
     this.ttsService = new TtsService(
       this.settings.apiKey,
       this.settings.source,
@@ -66,7 +68,7 @@ export default class MemodackPlugin extends Plugin {
     );
     const hashService = new HashService();
     const audioService = new AudioService(
-      this.cacheService,
+      cacheService,
       this.playerService,
       this.ttsService,
       hashService,
@@ -126,5 +128,11 @@ export default class MemodackPlugin extends Plugin {
     this.actionsService.setPlayVariant(this.settings.playVariant);
     this.actionsService.setSource(this.settings.source);
     this.actionsService.setTarget(this.settings.target);
+  }
+
+  private getCacheDirectoryPath(): string {
+    return this.manifest.dir
+      ? `${this.manifest.dir}/cache`
+      : `${this.app.vault.configDir}/plugins/${this.manifest.id}/cache`;
   }
 }

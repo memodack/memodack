@@ -1,5 +1,6 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 
+import { ICacheService } from './cache.service';
 import MemodackPlugin from './main';
 import { languages } from './languages';
 import prettyBytes from 'pretty-bytes';
@@ -27,21 +28,16 @@ export const DEFAULT_SETTINGS: Partial<ISettings> = {
 };
 
 export class SettingTabService extends PluginSettingTab {
-  plugin: MemodackPlugin;
+  private readonly plugin: MemodackPlugin;
+  private readonly cacheService: ICacheService;
   private cacheSize: number = 0;
 
-  constructor(app: App, plugin: MemodackPlugin) {
+  constructor(app: App, plugin: MemodackPlugin, cacheService: ICacheService) {
     super(app, plugin);
     this.plugin = plugin;
+    this.cacheService = cacheService;
 
-    this.plugin.cacheService
-      .getSize()
-      .then((cacheSize) => {
-        this.cacheSize = cacheSize;
-      })
-      .catch(() => {
-        this.cacheSize = 0;
-      });
+    this.getCacheSize();
   }
 
   display(): void {
@@ -148,13 +144,13 @@ export class SettingTabService extends PluginSettingTab {
 
     const cacheSetting = new Setting(containerEl)
       .setName('Cache')
-      .setDesc(`${prettyBytes(this.cacheSize)}.`)
+      .setDesc(prettyBytes(this.cacheSize))
       .addButton((btn) =>
         btn
           .setButtonText('Clear')
           .setCta()
           .onClick(async () => {
-            await this.plugin.cacheService.clear();
+            await this.cacheService.clear();
             cacheSetting.setDesc(prettyBytes(0));
           }),
       );
@@ -169,5 +165,16 @@ export class SettingTabService extends PluginSettingTab {
     }
 
     await this.plugin.checkService.check();
+  }
+
+  private getCacheSize(): void {
+    this.cacheService
+      .getSize()
+      .then((cacheSize) => {
+        this.cacheSize = cacheSize;
+      })
+      .catch(() => {
+        this.cacheSize = 0;
+      });
   }
 }
