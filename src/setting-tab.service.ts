@@ -1,6 +1,7 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 
 import { ICacheService } from './cache.service';
+import { ICheckService } from './check.service';
 import MemodackPlugin from './main';
 import { languages } from './languages';
 import prettyBytes from 'pretty-bytes';
@@ -30,12 +31,19 @@ export const DEFAULT_SETTINGS: Partial<ISettings> = {
 export class SettingTabService extends PluginSettingTab {
   private readonly plugin: MemodackPlugin;
   private readonly cacheService: ICacheService;
+  private readonly checkService: ICheckService;
   private cacheSize: number = 0;
 
-  constructor(app: App, plugin: MemodackPlugin, cacheService: ICacheService) {
+  constructor(
+    app: App,
+    plugin: MemodackPlugin,
+    cacheService: ICacheService,
+    checkService: ICheckService,
+  ) {
     super(app, plugin);
     this.plugin = plugin;
     this.cacheService = cacheService;
+    this.checkService = checkService;
 
     this.getCacheSize();
   }
@@ -164,7 +172,7 @@ export class SettingTabService extends PluginSettingTab {
       return;
     }
 
-    await this.plugin.checkService.check();
+    await this.checkService.check();
   }
 
   private getCacheSize(): void {

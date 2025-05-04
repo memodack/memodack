@@ -1,5 +1,6 @@
-import { ITranslationService } from './translation.service';
-import { ITtsService } from './tts.service';
+import { ITranslationService, translationService } from './translation.service';
+import { ITtsService, ttsService } from './tts.service';
+
 import { Notice } from 'obsidian';
 
 export interface ICheckService {
@@ -55,3 +56,5 @@ export class CheckService implements ICheckService {
     }
   }
 }
+
+export const checkService = new CheckService(translationService, ttsService);

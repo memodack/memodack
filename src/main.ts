@@ -1,4 +1,3 @@
-import { CheckService, ICheckService } from './check.service';
 import {
   DEFAULT_SETTINGS,
   ISettings,
@@ -12,6 +11,7 @@ import { RibbonIconService } from './ribbon-icon.service';
 import { actionsService } from './actions.service';
 import { blitzService } from './blitz.service';
 import { cacheService } from './cache.service';
+import { checkService } from './check.service';
 import { icon } from './icon';
 import { mppService } from './mpp.service';
 import { playerService } from './player.service';
@@ -21,8 +21,6 @@ import { ttsService } from './tts.service';
 
 export default class MemodackPlugin extends Plugin {
   settings!: ISettings;
-
-  checkService!: ICheckService;
 
   async loadSettings(): Promise<void> {
     const loadedData = (await this.loadData()) as ISettings;
@@ -46,6 +44,7 @@ export default class MemodackPlugin extends Plugin {
       this.app,
       this,
       cacheService,
+      checkService,
     );
     const partsService = new PartsService(this.app);
 
@@ -65,12 +64,12 @@ export default class MemodackPlugin extends Plugin {
       actionsService,
       blitzService,
     );
+
     const ribbonIconService = new RibbonIconService(
       this.app,
       partsService,
       blitzModalService,
     );
-    this.checkService = new CheckService(translationService, ttsService);
 
     this.addSettingTab(settingTabService);
     this.addCommand(translateCommandService);
