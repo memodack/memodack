@@ -44,11 +44,11 @@ export class ActionsService implements IActionsService {
   }
 
   private get target(): string {
-    if (!this._source) {
+    if (!this._target) {
       throw new Error('The target is not set.');
     }
 
-    return this._source;
+    return this._target;
   }
 
   async play(value: string, translation: string): Promise<void> {
