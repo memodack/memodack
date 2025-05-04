@@ -1,4 +1,4 @@
-import { IActionsService } from './actions.service';
+import { IActionsService, actionsService } from './actions.service';
 
 export interface IMppService {
   postProcessor(element: HTMLElement): void;
@@ -71,3 +71,5 @@ export class MppService implements IMppService {
     });
   };
 }
+
+export const mppService = new MppService(actionsService);
