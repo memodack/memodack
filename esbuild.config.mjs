@@ -34,18 +34,19 @@ if (existsSync(outdir)) {
 }
 
 const stylesCopyPlugin = () => ({
-  name: 'copy-assets',
+  name: 'styles-copy-plugin',
   setup(build) {
     build.onEnd(async () => {
       const css = await readFile('src/styles.css', 'utf8');
       const minified = new CleanCSS().minify(css).styles;
+
       await writeFile(join(outdir, 'styles.css'), minified);
     });
   },
 });
 
 const manifestCopyPlugin = () => ({
-  name: 'copy-assets',
+  name: 'manifest-copy-plugin',
   setup(build) {
     build.onEnd(async () => {
       await copyFile('manifest.json', join(outdir, 'manifest.json'));
