@@ -2,7 +2,7 @@
 
 ### Description
 
-We all know paid services like [Quizlet](https://quizlet.com/), [Readlang](https://readlang.com/), or free ones like [Anki](https://apps.ankiweb.net/). Memodack offers something similar, but much simpler and focused exclusively on memorizing language parts. Study whenever it suits you, without any limitations, on **mobile** or **desktop**.
+We all know paid services like [Quizlet](https://quizlet.com/), [Readlang](https://readlang.com/), or free ones like [Anki](https://apps.ankiweb.net/). Memodack offers something similar, but much simpler and focused exclusively on memorizing language parts. Study whenever it suits you — **without limits**, **offline**, on **mobile** or **desktop**.
 
 ![alt text](docs/desktop.png)
 
@@ -16,6 +16,8 @@ We all know paid services like [Quizlet](https://quizlet.com/), [Readlang](https
 ### Settings
 
 The plugin uses an API for text translation and text-to-speech (TTS). Currently, the provider is Google. To obtain an API key, you need to enable access to two services: [Cloud Translation API](https://console.cloud.google.com/marketplace/product/google/translate.googleapis.com) and [Cloud Text-to-Speech API](https://console.cloud.google.com/marketplace/product/google/texttospeech.googleapis.com). After that, you can create an API key in the [Credentials](https://console.cloud.google.com/apis/credentials) section.
+
+**You can use the plugin without connecting to Google services, but in that case, text-to-speech and translation won't work — however, Blitz mode will!**
 
 ![alt text](docs/settings.png)
 
@@ -45,7 +47,7 @@ For a quick translation and to convert a part to plugin syntax, select what you 
 
 For practice, open a document in reading mode and click the flash icon in the left ribbon menu, or search for `Memodack` in the command palette.
 
-If you don't want to practice all the parts in the document, just select what you need. If a part is not fully highlighted, it will still be selected.
+If you don't want to practice all the parts in the document, just select what you need and click the flash icon. If a part is not fully highlighted, it will still be selected.
 
 ### Cache
 
