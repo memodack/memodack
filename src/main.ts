@@ -10,6 +10,7 @@ import {
   cacheService,
   checkService,
   mppService,
+  progressBarService,
   translateCommandService,
   triggerSettingsService,
 } from './services';
@@ -93,6 +94,7 @@ export default class MemodackPlugin extends Plugin {
       this.app,
       actionsService,
       blitzService,
+      progressBarService,
     );
   }
 

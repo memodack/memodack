@@ -16,3 +16,4 @@ export * from './setting-tab.service';
 export * from './shuffle.service';
 export * from './translate-command.service';
 export * from './trigger-settings.service';
+export * from './progress-bar.service';
