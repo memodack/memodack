@@ -3,6 +3,7 @@ import { App, Modal } from 'obsidian';
 import { IActionsService } from './actions.service';
 import { IBlitzService } from './blitz.service';
 import { IPart } from './parts.service';
+import { IProgressBarService } from './progress-bar.service';
 
 export interface IBlitzModalService {
   setParts(parts: IPart[]): void;
@@ -11,17 +12,19 @@ export interface IBlitzModalService {
 export class BlitzModalService extends Modal implements IBlitzModalService {
   private actionsService: IActionsService;
   private blitzService: IBlitzService;
+  private progressBarService: IProgressBarService;
   private parts: IPart[] = [];
 
   constructor(
     app: App,
-
     actionsService: IActionsService,
     blitzService: IBlitzService,
+    progressBarService: IProgressBarService,
   ) {
     super(app);
     this.actionsService = actionsService;
     this.blitzService = blitzService;
+    this.progressBarService = progressBarService;
   }
 
   setParts(parts: IPart[]): void {
@@ -30,7 +33,11 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
   onOpen(): void {
     this.blitzService.create(this.parts);
-    this.createBlitz(0);
+
+    const id = 0;
+
+    this.progressBarService.create(this.contentEl, this.parts.length, id);
+    this.createBlitz(id);
   }
 
   onClose(): void {
@@ -105,7 +112,8 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
       });
     });
 
-    this.createHrElement();
+    answersElement.appendChild(this.progressBarService.getElement());
+    this.progressBarService.setValue(this.blitzService.getProgress());
 
     const blitzNext = contentEl.createEl('div');
     blitzNext.addClass('memodack___blitz__next');
@@ -131,11 +139,5 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     const questionH2Element = contentEl.createEl('div');
     questionH2Element.setText(text);
     questionH2Element.addClass('memodack___blitz__text');
-  }
-
-  private createHrElement(): void {
-    const { contentEl } = this;
-    const hrElement = contentEl.createEl('hr');
-    hrElement.addClass('memodack___blitz__hr');
   }
 }
