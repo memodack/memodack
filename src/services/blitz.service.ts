@@ -15,12 +15,14 @@ export interface IBlitzService {
   getBlitz(id: number): IBlitz | null;
   repeatBlitz(id: number): void;
   getSize(): number;
+  getProgress(): number;
 }
 
 export class BlitzService implements IBlitzService {
   private blitzMap = new Map<number, IBlitz>();
   private shuffleService: IShuffleService;
   private numbersService: INumbersService;
+  private progress = 0;
 
   constructor(
     shuffleService: IShuffleService,
@@ -32,6 +34,8 @@ export class BlitzService implements IBlitzService {
 
   create(parts: IPart[]): void {
     this.blitzMap.clear();
+
+    this.resetProgress();
 
     const shuffleParts = this.shuffleService.shuffle(parts);
 
@@ -71,6 +75,8 @@ export class BlitzService implements IBlitzService {
       return null;
     }
 
+    this.positiveProgress();
+
     return blitz;
   }
 
@@ -80,6 +86,8 @@ export class BlitzService implements IBlitzService {
     if (!blitz) {
       return;
     }
+
+    this.negativeProgress();
 
     const shuffleAnswers = this.shuffleService.shuffle(blitz.answers);
 
@@ -99,6 +107,22 @@ export class BlitzService implements IBlitzService {
 
   getSize(): number {
     return this.blitzMap.size;
+  }
+
+  getProgress(): number {
+    return this.progress - 1;
+  }
+
+  private resetProgress(): void {
+    this.progress = 0;
+  }
+
+  private positiveProgress(): void {
+    this.progress += 1;
+  }
+
+  private negativeProgress(): void {
+    this.progress -= 1;
   }
 }
 
