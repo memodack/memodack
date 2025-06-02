@@ -1,3 +1,4 @@
 npm run prettier
 npm run lint
+npm run lint:circulars
 npm run test
