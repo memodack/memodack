@@ -1,40 +1,43 @@
-import { App, MarkdownView, Notice } from 'obsidian';
 import { IPart, IPartsService } from './parts.service';
 
 import { BlitzModalService } from './blitz-modal.service';
-import { icon } from '../icon';
+import { IWorkspaceService } from './workspace.service';
+import { Notice } from 'obsidian';
 
 export interface IRibbonIconService {
-  id: string;
-  title: string;
-  callback(): Promise<void>;
+  getCallback: () => Promise<void>;
 }
 
-export class RibbonIconService implements IRibbonIconService {
-  id = icon.id;
-  title = icon.title;
+const svg = `
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M13 2 4.093 12.688c-.348.418-.523.628-.525.804a.5.5 0 0 0 .185.397c.138.111.41.111.955.111H12l-1 8 8.907-10.688c.348-.418.523-.628.525-.804a.5.5 0 0 0-.185-.397c-.138-.111-.41-.111-.955-.111H12z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
 
-  private app: App;
+export class RibbonIconService implements IRibbonIconService {
+  static readonly id = 'memodack';
+  static readonly title = 'Memodack';
+  static readonly svg = svg;
+
+  private workspaceService: IWorkspaceService;
   private partsService: IPartsService;
   private blitzModalService: BlitzModalService;
 
   constructor(
-    app: App,
+    workspaceService: IWorkspaceService,
     partsService: IPartsService,
     blitzModalService: BlitzModalService,
   ) {
-    this.app = app;
+    this.workspaceService = workspaceService;
     this.partsService = partsService;
     this.blitzModalService = blitzModalService;
   }
 
-  callback = async (): Promise<void> => {
-    const isReadingMode =
-      this.app.workspace.getActiveViewOfType(MarkdownView)?.getMode() ===
-      'preview';
+  getCallback = async (): Promise<void> => {
+    const isReadingMode = this.workspaceService.isReadingMode();
 
     if (!isReadingMode) {
-      new Notice('Only in Reading Mode!');
+      new Notice('Only in Reading Mode.');
       return;
     }
 
@@ -47,12 +50,12 @@ export class RibbonIconService implements IRibbonIconService {
     }
 
     if (!parts.length) {
-      new Notice('No parts provided!');
+      new Notice('No parts provided.');
       return;
     }
 
     if (parts.length < 4) {
-      new Notice('At least 4 parts required!');
+      new Notice('At least 4 parts required.');
       return;
     }
 

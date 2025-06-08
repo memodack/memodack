@@ -1,7 +1,7 @@
 import { App, Modal } from 'obsidian';
 
-import { IActionsService } from './actions.service';
 import { IBlitzService } from './blitz.service';
+import { IConductorService } from './conductor.service';
 import { IPart } from './parts.service';
 import { IProgressBarService } from './progress-bar.service';
 
@@ -10,21 +10,21 @@ export interface IBlitzModalService {
 }
 
 export class BlitzModalService extends Modal implements IBlitzModalService {
-  private actionsService: IActionsService;
   private blitzService: IBlitzService;
   private progressBarService: IProgressBarService;
+  private conductorService: IConductorService;
   private parts: IPart[] = [];
 
   constructor(
     app: App,
-    actionsService: IActionsService,
     blitzService: IBlitzService,
     progressBarService: IProgressBarService,
+    conductorService: IConductorService,
   ) {
     super(app);
-    this.actionsService = actionsService;
     this.blitzService = blitzService;
     this.progressBarService = progressBarService;
+    this.conductorService = conductorService;
   }
 
   setParts(parts: IPart[]): void {
@@ -63,7 +63,7 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
       this.createTextElement(blitz.text);
     }
 
-    void this.actionsService.playValue(blitz.question);
+    void this.conductorService.playValue(blitz.question);
 
     let nextButtonEl: HTMLButtonElement | undefined = undefined;
     let correctOptionEl: HTMLButtonElement | undefined = undefined;
@@ -90,7 +90,7 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
         if (blitz.correctAnswerId === index) {
           answerButtonElement.addClass('correct');
-          void this.actionsService.playTranslation(item);
+          void this.conductorService.playTranslation(item);
         } else {
           answerButtonElement.addClass('wrong');
           correctOptionEl?.addClass('correct');

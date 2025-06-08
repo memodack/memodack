@@ -1,62 +1,38 @@
-import { requestUrl } from 'obsidian';
+import { Notice, RequestUrlResponsePromise, requestUrl } from 'obsidian';
 
-interface ITtsResponse {
+import { ELanguage } from '../types';
+import { ISettingsService } from './settings.service';
+
+export interface ITtsService {
+  tts(language: ELanguage, value: string): Promise<string | null>;
+  test(): Promise<void>;
+}
+
+export interface ITtsResponse {
   audioContent: string;
 }
 
-export interface ITtsService {
-  setApiKey(apiKey: string): void;
-  setSource(source: string): void;
-  tts(value: string): Promise<string | null>;
-}
-
 export class TtsService implements ITtsService {
-  private _apiKey: string | null = null;
-  private _source: string | null = null;
+  private settingsService: ISettingsService;
 
-  setApiKey(apiKey: string): void {
-    this._apiKey = apiKey;
+  constructor(settingsService: ISettingsService) {
+    this.settingsService = settingsService;
   }
 
-  setSource(source: string): void {
-    this._source = source;
-  }
-
-  private get apiKey(): string {
-    if (!this._apiKey) {
-      throw new Error(' The api key is not set.');
-    }
-
-    return this._apiKey;
-  }
-
-  private get source(): string {
-    if (!this._source) {
-      throw new Error(' The source is not set.');
-    }
-
-    return this._source;
-  }
-
-  async tts(value: string): Promise<string | null> {
+  async tts(language: ELanguage, value: string): Promise<string | null> {
     try {
-      const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${this.apiKey}`;
+      const url = this.getUrl();
 
-      const requestBody = {
-        input: { text: value },
-        voice: {
-          languageCode: this.source,
-          ssmlGender: 'NEUTRAL',
-        },
-        audioConfig: { audioEncoding: 'MP3' },
-      };
+      if (!url) {
+        return null;
+      }
 
-      const response = (await requestUrl({
-        method: 'POST',
+      const body = this.getBody(value, language);
+
+      const response: { json: Promise<ITtsResponse> } = await this.request(
         url,
-        contentType: 'application/json',
-        body: JSON.stringify(requestBody),
-      })) as { json: Promise<ITtsResponse> };
+        body,
+      );
 
       const json = await response.json;
 
@@ -68,6 +44,52 @@ export class TtsService implements ITtsService {
       return null;
     }
   }
-}
 
-export const ttsService = new TtsService();
+  async test(): Promise<void> {
+    try {
+      const response = await this.tts(ELanguage.English, 'ping');
+
+      if (!response) {
+        new Notice('The text-to-speech service is not working.');
+        return;
+      }
+
+      new Notice('The text-to-speech service is working.');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      new Notice('The text-to-speech service is not working.');
+    }
+  }
+
+  private getUrl(): string | null {
+    const apiKey = this.settingsService.getApiKey();
+
+    if (!apiKey) {
+      return null;
+    }
+
+    return `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
+  }
+
+  private getBody(value: string, language: ELanguage): string {
+    const body = {
+      input: { text: value },
+      voice: {
+        languageCode: language,
+        ssmlGender: 'NEUTRAL',
+      },
+      audioConfig: { audioEncoding: 'MP3' },
+    };
+
+    return JSON.stringify(body);
+  }
+
+  private request(url: string, body: string): RequestUrlResponsePromise {
+    return requestUrl({
+      method: 'POST',
+      url,
+      contentType: 'application/json',
+      body,
+    });
+  }
+}

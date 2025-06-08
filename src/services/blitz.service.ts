@@ -1,6 +1,3 @@
-import { INumbersService, numbersService } from './numbers.service';
-import { IShuffleService, shuffleService } from './shuffle.service';
-
 import { IPart } from './parts.service';
 
 export interface IBlitz {
@@ -20,31 +17,18 @@ export interface IBlitzService {
 
 export class BlitzService implements IBlitzService {
   private blitzMap = new Map<number, IBlitz>();
-  private shuffleService: IShuffleService;
-  private numbersService: INumbersService;
-  private progress = 0;
 
-  constructor(
-    shuffleService: IShuffleService,
-    numbersService: INumbersService,
-  ) {
-    this.shuffleService = shuffleService;
-    this.numbersService = numbersService;
-  }
+  private progress = 0;
 
   create(parts: IPart[]): void {
     this.blitzMap.clear();
 
     this.resetProgress();
 
-    const shuffleParts = this.shuffleService.shuffle(parts);
+    const shuffleParts = this.shuffle(parts);
 
     shuffleParts.forEach((shufflePartItem, index) => {
-      const [n1, n2, n3] = this.numbersService.getRandomNumbers(
-        shuffleParts.length,
-        index,
-        3,
-      );
+      const [n1, n2, n3] = this.getRandomNumbers(shuffleParts.length, index, 3);
 
       const q1 = shufflePartItem.translation;
       const q2 = shuffleParts[n1].translation;
@@ -53,7 +37,7 @@ export class BlitzService implements IBlitzService {
 
       const answers = [q1, q2, q3, q4];
 
-      const shuffleAnswers = this.shuffleService.shuffle(answers);
+      const shuffleAnswers = this.shuffle(answers);
 
       const correctAnswerId = shuffleAnswers.findIndex(
         (shuffleAnswerItem) => shuffleAnswerItem === q1,
@@ -89,7 +73,7 @@ export class BlitzService implements IBlitzService {
 
     this.negativeProgress();
 
-    const shuffleAnswers = this.shuffleService.shuffle(blitz.answers);
+    const shuffleAnswers = this.shuffle(blitz.answers);
 
     const blitzTranslation = blitz.answers[blitz.correctAnswerId];
 
@@ -124,6 +108,65 @@ export class BlitzService implements IBlitzService {
   private negativeProgress(): void {
     this.progress -= 1;
   }
+
+  private getRandomNumbers(
+    maxNumber: number,
+    ignoreNumber: number,
+    count: number,
+  ): number[] {
+    if (maxNumber < 1 || count < 1) {
+      throw new Error(
+        'The maxNumber must be greater than or equal to 1 and count must be greater than or equal to 1.',
+      );
+    }
+
+    const availableNumbers = new Set<number>();
+    for (let i = 0; i < maxNumber; i++) {
+      if (i !== ignoreNumber) {
+        availableNumbers.add(i);
+      }
+    }
+
+    if (availableNumbers.size < count) {
+      throw new Error(
+        'Not enough unique numbers available to satisfy the count.',
+      );
+    }
+
+    const result: number[] = [];
+    const availableArray = Array.from(availableNumbers);
+
+    while (result.length < count) {
+      const randomIndex = Math.floor(Math.random() * availableArray.length);
+      const randomNumber = availableArray[randomIndex];
+      result.push(randomNumber);
+      availableArray.splice(randomIndex, 1);
+    }
+
+    return result;
+  }
+
+  /**
+   * Shuffles the elements of an array using the Fisher-Yates algorithm.
+   */
+  private shuffle<T>(array: T[]): T[] {
+    if (!Array.isArray(array)) {
+      throw new Error('Input array cannot be null or undefined.');
+    }
+
+    // Create a copy of the array to avoid modifying the original
+    const shuffled = [...array];
+
+    // Fisher-Yates shuffle algorithm
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+
+      // Swap elements
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+  }
 }
 
-export const blitzService = new BlitzService(shuffleService, numbersService);
+export const blitzService = new BlitzService();

@@ -1,4 +1,5 @@
-import { App } from 'obsidian';
+import { IVaultService } from './vault.service';
+import { IWorkspaceService } from './workspace.service';
 
 export interface IPart {
   value: string;
@@ -12,20 +13,25 @@ export interface IPartsService {
 }
 
 export class PartsService implements IPartsService {
-  private app: App;
+  private vaultService: IVaultService;
+  private workspaceService: IWorkspaceService;
 
-  constructor(app: App) {
-    this.app = app;
+  constructor(
+    vaultService: IVaultService,
+    workspaceService: IWorkspaceService,
+  ) {
+    this.vaultService = vaultService;
+    this.workspaceService = workspaceService;
   }
 
   async getParts(): Promise<IPart[]> {
-    const activeFile = this.app.workspace.getActiveFile();
+    const activeFile = this.workspaceService.getActiveFile();
 
     if (!activeFile) {
       return [];
     }
 
-    const content = await this.app.vault.read(activeFile);
+    const content = await this.vaultService.read(activeFile);
 
     if (!content.length) {
       return [];
@@ -72,7 +78,7 @@ export class PartsService implements IPartsService {
   }
 
   getSelectedParts(): IPart[] {
-    const activeFile = this.app.workspace.getActiveFile();
+    const activeFile = this.workspaceService.getActiveFile();
 
     if (!activeFile) {
       return [];

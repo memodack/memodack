@@ -1,6 +1,18 @@
-import { requestUrl } from 'obsidian';
+import { Notice, RequestUrlResponsePromise, requestUrl } from 'obsidian';
 
-interface ITransactionResponse {
+import { ELanguage } from '../types';
+import { ISettingsService } from './settings.service';
+
+export interface ITranslationService {
+  translate(
+    source: ELanguage,
+    target: ELanguage,
+    text: string,
+  ): Promise<string | null>;
+  test(): Promise<void>;
+}
+
+export interface ITransactionResponse {
   data: {
     translations: [
       {
@@ -10,71 +22,29 @@ interface ITransactionResponse {
   };
 }
 
-export interface ITranslationService {
-  setApiKey(apiKey: string): void;
-  setSource(source: string): void;
-  setTarget(target: string): void;
-  translate(text: string): Promise<string | null>;
-}
-
 export class TranslationService implements ITranslationService {
-  private _apiKey: string | null = null;
-  private _source: string | null = null;
-  private _target: string | null = null;
+  private settingsService: ISettingsService;
 
-  setApiKey(apiKey: string): void {
-    this._apiKey = apiKey;
+  constructor(settingsService: ISettingsService) {
+    this.settingsService = settingsService;
   }
 
-  setSource(source: string): void {
-    this._source = source;
-  }
-
-  setTarget(target: string): void {
-    this._target = target;
-  }
-
-  private get apiKey(): string {
-    if (!this._apiKey) {
-      throw new Error(' The api key is not set.');
-    }
-
-    return this._apiKey;
-  }
-
-  private get source(): string {
-    if (!this._source) {
-      throw new Error(' The source is not set.');
-    }
-
-    return this._source;
-  }
-
-  private get target(): string {
-    if (!this._target) {
-      throw new Error(' The target is not set.');
-    }
-
-    return this._target;
-  }
-
-  async translate(text: string): Promise<string | null> {
+  async translate(
+    source: ELanguage,
+    target: ELanguage,
+    text: string,
+  ): Promise<string | null> {
     try {
-      const url = `https://translation.googleapis.com/language/translate/v2?key=${this.apiKey}`;
+      const url = this.getUrl();
 
-      const requestBody = {
-        q: text,
-        source: this.source,
-        target: this.target,
-        format: 'text',
-      };
+      if (!url) {
+        return null;
+      }
 
-      const response = (await requestUrl({
-        method: 'POST',
-        url,
-        contentType: 'application/json',
-        body: JSON.stringify(requestBody),
-      })) as { json: Promise<ITransactionResponse> };
+      const body = this.getBody(source, target, text);
+
+      const response: { json: Promise<ITransactionResponse> } =
+        await this.request(url, body);
 
       const json = await response.json;
 
@@ -86,6 +56,54 @@ export class TranslationService implements ITranslationService {
       return null;
     }
   }
-}
 
-export const translationService = new TranslationService();
+  async test(): Promise<void> {
+    try {
+      const response = await this.translate(
+        ELanguage.English,
+        ELanguage.Ukrainian,
+        'ping',
+      );
+
+      if (!response) {
+        new Notice('The translation service is not working.');
+        return;
+      }
+
+      new Notice('The translation service is working.');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      new Notice('The translation service is not working.');
+    }
+  }
+
+  private getUrl(): string | null {
+    const apiKey = this.settingsService.getApiKey();
+
+    if (!apiKey) {
+      return null;
+    }
+
+    return `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+  }
+
+  private getBody(source: ELanguage, target: ELanguage, text: string): string {
+    const body = {
+      q: text,
+      source,
+      target,
+      format: 'text',
+    };
+
+    return JSON.stringify(body);
+  }
+
+  private request(url: string, body: string): RequestUrlResponsePromise {
+    return requestUrl({
+      method: 'POST',
+      url,
+      contentType: 'application/json',
+      body,
+    });
+  }
+}
