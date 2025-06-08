@@ -1,36 +1,55 @@
-import { Command, Editor } from 'obsidian';
-import { IActionsService, actionsService } from './actions.service';
-import { ITranslationService, translationService } from './translation.service';
+import { IConductorService } from './conductor.service';
+import { IEditorService } from './editor.service';
+import { ISettingsService } from './settings.service';
+import { ITranslationService } from './translation.service';
 
-export class TranslateCommandService implements Command {
-  id = 'translate';
-  name = 'Translate';
+export interface ITranslateCommandService {
+  getCallback: () => Promise<void>;
+}
 
+export class TranslateCommandService implements ITranslateCommandService {
+  static readonly id = 'translate';
+  static readonly name = 'Translate';
+
+  private editorService: IEditorService;
   private translationService: ITranslationService;
-  private actionService: IActionsService;
+  private settingsService: ISettingsService;
+  private conductorService: IConductorService;
 
   constructor(
+    editorService: IEditorService,
     translationService: ITranslationService,
-    actionService: IActionsService,
+    settingsService: ISettingsService,
+    conductorService: IConductorService,
   ) {
+    this.editorService = editorService;
     this.translationService = translationService;
-    this.actionService = actionService;
+    this.settingsService = settingsService;
+    this.conductorService = conductorService;
   }
 
-  async editorCallback(editor: Editor): Promise<void> {
-    const selection = editor.getSelection();
-    const translation = await this.translationService.translate(selection);
+  getCallback = async (): Promise<void> => {
+    const selection = this.editorService.getSelection();
+
+    if (!selection) {
+      return;
+    }
+
+    const source = this.settingsService.getSource();
+    const target = this.settingsService.getTarget();
+
+    const translation = await this.translationService.translate(
+      source,
+      target,
+      selection,
+    );
 
     if (!translation) {
       return;
     }
 
-    editor.replaceSelection(`{${selection}|${translation}}`);
-    await this.actionService.playValueAndTranslation(selection, translation);
-  }
-}
+    this.editorService.replaceSelection(`{${selection}|${translation}}`);
 
-export const translateCommandService = new TranslateCommandService(
-  translationService,
-  actionsService,
-);
+    await this.conductorService.playValueAndTranslation(selection, translation);
+  };
+}

@@ -1,42 +1,37 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
-import { TPlayVariant, TPlugin } from '../types';
+import {
+  ELanguage,
+  EPlayVariant,
+  EVoiceOverSpeed,
+  TMemodackPlugin,
+} from '../types';
 
 import { ICacheService } from './cache.service';
-import { ICheckService } from './check.service';
-import { languages } from '../languages';
+import { ITranslationService } from './translation.service';
+import { ITtsService } from './tts.service';
 import prettyBytes from 'pretty-bytes';
-
-export interface ISettings {
-  source: string;
-  target: string;
-  playVariant: TPlayVariant;
-  voiceOverSpeed: string;
-  apiKey: string;
-}
-
-export const DEFAULT_SETTINGS: Partial<ISettings> = {
-  source: 'en',
-  target: 'uk',
-  playVariant: 'translation-and-value',
-  voiceOverSpeed: 'x1',
-};
+import { settingsService } from './settings.service';
 
 export class SettingTabService extends PluginSettingTab {
-  private readonly plugin: TPlugin;
+  private readonly plugin: TMemodackPlugin;
   private readonly cacheService: ICacheService;
-  private readonly checkService: ICheckService;
+  private readonly translationService: ITranslationService;
+  private readonly ttsService: ITtsService;
   private cacheSize: number = 0;
 
   constructor(
     app: App,
-    plugin: TPlugin,
+    plugin: TMemodackPlugin,
     cacheService: ICacheService,
-    checkService: ICheckService,
+    translationService: ITranslationService,
+    ttsService: ITtsService,
   ) {
     super(app, plugin);
+
     this.plugin = plugin;
     this.cacheService = cacheService;
-    this.checkService = checkService;
+    this.translationService = translationService;
+    this.ttsService = ttsService;
 
     this.getCacheSize();
   }
@@ -53,9 +48,9 @@ export class SettingTabService extends PluginSettingTab {
       .setDesc('API key for translation and text-to-speech services.')
       .addText((text) => {
         text
-          .setValue(this.plugin.settings.apiKey || '')
+          .setValue(settingsService.getApiKey())
           .onChange(async (value) => {
-            this.plugin.settings.apiKey = value;
+            settingsService.setApiKey(value);
             await this.plugin.saveSettings();
           })
           .inputEl.setAttribute('type', 'password');
@@ -75,15 +70,21 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl).setName('Language').setHeading();
 
+    const options: Record<string, string> = {};
+
+    Object.keys(ELanguage).forEach((key) => {
+      options[ELanguage[key as keyof typeof ELanguage]] = key;
+    });
+
     new Setting(containerEl)
       .setName('Native')
       .setDesc('This is the language you speak natively.')
       .addDropdown((dropdown) => {
         dropdown
-          .addOptions(languages)
-          .setValue(this.plugin.settings.target)
+          .addOptions(options)
+          .setValue(settingsService.getTarget())
           .onChange(async (value) => {
-            this.plugin.settings.target = value;
+            settingsService.setTarget(value as ELanguage);
             await this.plugin.saveSettings();
           });
       });
@@ -93,10 +94,10 @@ export class SettingTabService extends PluginSettingTab {
       .setDesc('This is the language of the document.')
       .addDropdown((dropdown) => {
         dropdown
-          .addOptions(languages)
-          .setValue(this.plugin.settings.source)
+          .addOptions(options)
+          .setValue(settingsService.getSource())
           .onChange(async (value) => {
-            this.plugin.settings.source = value;
+            settingsService.setSource(value as ELanguage);
             await this.plugin.saveSettings();
           });
       });
@@ -109,13 +110,13 @@ export class SettingTabService extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
-            x1: 'Normal',
-            x2: 'x2',
-            x3: 'x3',
+            [EVoiceOverSpeed.Normal]: 'Normal',
+            [EVoiceOverSpeed.x2]: 'x2',
+            [EVoiceOverSpeed.x3]: 'x3',
           })
-          .setValue(this.plugin.settings.voiceOverSpeed)
-          .onChange(async (value) => {
-            this.plugin.settings.voiceOverSpeed = value;
+          .setValue(settingsService.getVoiceOverSpeed().toString())
+          .onChange(async (value): Promise<void> => {
+            settingsService.setVoiceOverSpeed(parseInt(value));
             await this.plugin.saveSettings();
           });
       });
@@ -128,15 +129,15 @@ export class SettingTabService extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
-            nothing: 'Nothing',
-            value: 'Value',
-            translation: 'Translation',
-            'value-and-translation': 'Value + Translation',
-            'translation-and-value': 'Translation + Value',
+            [EPlayVariant.Nothing]: 'Nothing',
+            [EPlayVariant.Value]: 'Value',
+            [EPlayVariant.Translation]: 'Translation',
+            [EPlayVariant.ValueAndTranslation]: 'Value + Translation',
+            [EPlayVariant.TranslationAndValue]: 'Translation + Value',
           })
-          .setValue(this.plugin.settings.playVariant)
+          .setValue(settingsService.getPlayVariant())
           .onChange(async (value): Promise<void> => {
-            this.plugin.settings.playVariant = value as TPlayVariant;
+            settingsService.setPlayVariant(value as EPlayVariant);
             await this.plugin.saveSettings();
           });
       });
@@ -158,14 +159,15 @@ export class SettingTabService extends PluginSettingTab {
   }
 
   private async check(): Promise<void> {
-    const apiKey = this.plugin.settings.apiKey;
+    const apiKey = settingsService.getApiKey();
 
     if (!apiKey) {
       new Notice('No API key entered.');
       return;
     }
 
-    await this.checkService.check();
+    await this.translationService.test();
+    await this.ttsService.test();
   }
 
   private getCacheSize(): void {

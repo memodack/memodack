@@ -1,17 +1,17 @@
-import { IActionsService, actionsService } from './actions.service';
+import { IConductorService } from './conductor.service';
 
 export interface IMppService {
-  postProcessor(element: HTMLElement): void;
+  getPostProcessor(element: HTMLElement): void;
 }
 
 export class MppService implements IMppService {
-  private actionsService: IActionsService;
+  private conductorService: IConductorService;
 
-  constructor(actionsService: IActionsService) {
-    this.actionsService = actionsService;
+  constructor(conductorService: IConductorService) {
+    this.conductorService = conductorService;
   }
 
-  postProcessor = (element: HTMLElement): void => {
+  getPostProcessor = (element: HTMLElement): void => {
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
     const nodesToReplace = [];
@@ -55,7 +55,9 @@ export class MppService implements IMppService {
             },
           });
 
-          span.onClickEvent(() => this.actionsService.play(value, translation));
+          span.onClickEvent(() =>
+            this.conductorService.play(value, translation),
+          );
 
           fragment.appendChild(span);
         } else {
@@ -71,5 +73,3 @@ export class MppService implements IMppService {
     });
   };
 }
-
-export const mppService = new MppService(actionsService);

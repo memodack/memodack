@@ -1,8 +1,8 @@
-import { Vault } from 'obsidian';
+import { IAdapterService } from './adapter.service';
+import { IPathsService } from './paths.service';
+import { IVaultService } from './vault.service';
 
 export interface ICacheService {
-  setVault(vault: Vault): void;
-  setDirectoryPath(directoryPath: string): void;
   add(key: string, value: string): Promise<void>;
   get(key: string): Promise<string | null>;
   getSize(): Promise<number>;
@@ -10,41 +10,30 @@ export interface ICacheService {
 }
 
 export class CacheService implements ICacheService {
-  private _vault: Vault | null = null;
-  private _directoryPath: string | null = null;
+  private pathsService: IPathsService;
+  private vaultService: IVaultService;
+  private adapterService: IAdapterService;
 
-  setVault(vault: Vault): void {
-    this._vault = vault;
-  }
-
-  setDirectoryPath(directoryPath: string): void {
-    this._directoryPath = directoryPath;
-  }
-
-  private get vault(): Vault {
-    if (!this._vault) {
-      throw new Error('The vault is not set.');
-    }
-
-    return this._vault;
-  }
-
-  private get directoryPath(): string {
-    if (!this._directoryPath) {
-      throw new Error('The directory path is not set.');
-    }
-
-    return this._directoryPath;
+  constructor(
+    pathsService: IPathsService,
+    vaultService: IVaultService,
+    adapterService: IAdapterService,
+  ) {
+    this.pathsService = pathsService;
+    this.vaultService = vaultService;
+    this.adapterService = adapterService;
   }
 
   async add(key: string, value: string): Promise<void> {
     try {
-      if (!(await this.vault.adapter.exists(this.directoryPath))) {
-        await this.vault.createFolder(this.directoryPath);
+      const cacheDirPath = this.pathsService.getCacheDirPath();
+
+      if (!(await this.adapterService.exists(cacheDirPath))) {
+        await this.vaultService.createFolder(cacheDirPath);
       }
 
-      if (!(await this.vault.adapter.exists(`${this.directoryPath}/${key}`))) {
-        await this.vault.adapter.write(`${this.directoryPath}/${key}`, value);
+      if (!(await this.adapterService.exists(`${cacheDirPath}/${key}`))) {
+        await this.adapterService.write(`${cacheDirPath}/${key}`, value);
       }
     } catch (e) {
       const errorMessage = `Failed to add cache for key '${key}'.`;
@@ -54,11 +43,13 @@ export class CacheService implements ICacheService {
 
   async get(key: string): Promise<string | null> {
     try {
-      if (!(await this.vault.adapter.exists(`${this.directoryPath}/${key}`))) {
+      const cacheDirPath = this.pathsService.getCacheDirPath();
+
+      if (!(await this.adapterService.exists(`${cacheDirPath}/${key}`))) {
         return null;
       }
 
-      return await this.vault.adapter.read(`${this.directoryPath}/${key}`);
+      return await this.adapterService.read(`${cacheDirPath}/${key}`);
     } catch (e) {
       const errorMessage = `Failed to get a cache by '${key}' key.`;
       console.error(errorMessage, e instanceof Error ? e.message : '');
@@ -69,16 +60,18 @@ export class CacheService implements ICacheService {
 
   async getSize(): Promise<number> {
     try {
+      const cacheDirPath = this.pathsService.getCacheDirPath();
+
       let totalSize = 0;
 
-      if (!(await this.vault.adapter.exists(this.directoryPath))) {
+      if (!(await this.adapterService.exists(cacheDirPath))) {
         return totalSize;
       }
 
-      const { files } = await this.vault.adapter.list(this.directoryPath);
+      const { files } = await this.adapterService.list(cacheDirPath);
 
       for (const file of files) {
-        const fileStat = await this.vault.adapter.stat(file);
+        const fileStat = await this.adapterService.stat(file);
         if (fileStat?.size) {
           totalSize += fileStat.size;
         }
@@ -96,11 +89,13 @@ export class CacheService implements ICacheService {
 
   async clear(): Promise<void> {
     try {
-      if (!(await this.vault.adapter.exists(this.directoryPath))) {
+      const cacheDirPath = this.pathsService.getCacheDirPath();
+
+      if (!(await this.adapterService.exists(cacheDirPath))) {
         return;
       }
 
-      await this.vault.adapter.rmdir(this.directoryPath, true);
+      await this.adapterService.rmdir(cacheDirPath, true);
     } catch (e) {
       console.error(
         `Failed to clear the cache. ${e instanceof Error ? e.message : ''}`,
@@ -108,5 +103,3 @@ export class CacheService implements ICacheService {
     }
   }
 }
-
-export const cacheService = new CacheService();

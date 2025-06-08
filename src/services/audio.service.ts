@@ -1,31 +1,30 @@
-import { ICacheService, cacheService } from './cache.service';
-import { IHashService, hashService } from './hash.service';
-import { IPlayerService, playerService } from './player.service';
-import { ITtsService, ttsService } from './tts.service';
+import { ELanguage } from '../types';
+import { ICacheService } from './cache.service';
+import { IPlayerService } from './player.service';
+import { ITtsService } from './tts.service';
+
+type TPlayArgs = { source: ELanguage; value: string }[];
 
 export interface IAudioService {
-  play(args: { source: string; value: string }[]): Promise<void>;
+  play(args: TPlayArgs): Promise<void>;
 }
 
 export class AudioService implements IAudioService {
-  private cacheService: ICacheService;
   private ttsService: ITtsService;
+  private cacheService: ICacheService;
   private playerService: IPlayerService;
-  private hashService: IHashService;
 
   constructor(
+    ttsService: ITtsService,
     cacheService: ICacheService,
     playerService: IPlayerService,
-    ttsService: ITtsService,
-    hashService: IHashService,
   ) {
+    this.ttsService = ttsService;
     this.cacheService = cacheService;
     this.playerService = playerService;
-    this.ttsService = ttsService;
-    this.hashService = hashService;
   }
 
-  async play(args: { source: string; value: string }[]): Promise<void> {
+  async play(args: TPlayArgs): Promise<void> {
     if (!args.length) {
       return;
     }
@@ -33,20 +32,19 @@ export class AudioService implements IAudioService {
     for (const { source, value } of args) {
       let audioUrl: string | null = null;
 
-      const key = await this.hashService.sha256(`${source}:${value}`);
+      const key = await this.getHash(`${source}:${value}`);
 
       audioUrl = await this.cacheService.get(key);
 
       if (!audioUrl) {
-        this.ttsService.setSource(source);
-        const audioUrl = await this.ttsService.tts(value);
+        const audioUrl = await this.ttsService.tts(source, value);
 
         if (!audioUrl) {
           return;
         }
 
         await this.cacheService.add(key, audioUrl);
-        await this.playerService.play(this.formatUrl(audioUrl));
+        await this.playerService.play(this.getFormattedUrl(audioUrl));
 
         continue;
       }
@@ -55,18 +53,29 @@ export class AudioService implements IAudioService {
         return;
       }
 
-      await this.playerService.play(this.formatUrl(audioUrl));
+      await this.playerService.play(this.getFormattedUrl(audioUrl));
     }
   }
 
-  private formatUrl(audioUrl: string): string {
+  private getFormattedUrl(audioUrl: string): string {
     return `data:audio/wav;base64,${audioUrl}`;
   }
-}
 
-export const audioService = new AudioService(
-  cacheService,
-  playerService,
-  ttsService,
-  hashService,
-);
+  private async getHash(data: string): Promise<string> {
+    // Convert the string to a byte array
+    const msgBuffer = new TextEncoder().encode(data);
+
+    // Compute the hash
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+    // Convert the hash to a byte array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+    // Convert the byte array to a hexadecimal string
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    return hashHex;
+  }
+}

@@ -1,14 +1,15 @@
+import { ISettingsService } from './settings.service';
+
 export interface IPlayerService {
-  setSpeed(speed: number): void;
   play(audioUrl: string): Promise<void>;
 }
 
 export class PlayerService implements IPlayerService {
-  private readonly audio = new Audio();
-  private speed = 1;
+  private audio = new Audio();
+  private settingsService: ISettingsService;
 
-  setSpeed(speed: number): void {
-    this.speed = speed;
+  constructor(settingsService: ISettingsService) {
+    this.settingsService = settingsService;
   }
 
   async play(audioUrl: string): Promise<void> {
@@ -21,26 +22,9 @@ export class PlayerService implements IPlayerService {
 
     try {
       await this.audio.play();
-      this.audio.volume = 1;
-      this.audio.playbackRate = this.speed;
 
-      // Waiting for playback to finish
-      await new Promise<void>((resolve, reject) => {
-        this.audio.addEventListener(
-          'ended',
-          () => {
-            resolve();
-          },
-          { once: true },
-        );
-        this.audio.addEventListener(
-          'error',
-          () => {
-            reject(new Error('Audio playback error.'));
-          },
-          { once: true },
-        );
-      });
+      this.audio.volume = 1;
+      this.audio.playbackRate = this.settingsService.getVoiceOverSpeed();
     } catch (e) {
       const errorMessage = 'Audio playback error.';
 
@@ -53,5 +37,3 @@ export class PlayerService implements IPlayerService {
     }
   }
 }
-
-export const playerService = new PlayerService();
