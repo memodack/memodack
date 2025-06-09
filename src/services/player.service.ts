@@ -21,10 +21,20 @@ export class PlayerService implements IPlayerService {
     this.audio.src = audioUrl;
 
     try {
-      await this.audio.play();
-
       this.audio.volume = 1;
       this.audio.playbackRate = this.settingsService.getVoiceOverSpeed();
+
+      await this.audio.play();
+
+      await new Promise<void>((resolve) => {
+        this.audio.addEventListener(
+          'ended',
+          () => {
+            resolve();
+          },
+          { once: true },
+        );
+      });
     } catch (e) {
       const errorMessage = 'Audio playback error.';
 
