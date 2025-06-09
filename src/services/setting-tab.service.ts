@@ -7,16 +7,17 @@ import {
 } from '../types';
 
 import { ICacheService } from './cache.service';
+import { ISettingsService } from './settings.service';
 import { ITranslationService } from './translation.service';
 import { ITtsService } from './tts.service';
 import prettyBytes from 'pretty-bytes';
-import { settingsService } from './settings.service';
 
 export class SettingTabService extends PluginSettingTab {
   private readonly plugin: TMemodackPlugin;
   private readonly cacheService: ICacheService;
   private readonly translationService: ITranslationService;
   private readonly ttsService: ITtsService;
+  private readonly settingsService: ISettingsService;
   private cacheSize: number = 0;
 
   constructor(
@@ -25,6 +26,7 @@ export class SettingTabService extends PluginSettingTab {
     cacheService: ICacheService,
     translationService: ITranslationService,
     ttsService: ITtsService,
+    settingsService: ISettingsService,
   ) {
     super(app, plugin);
 
@@ -32,6 +34,7 @@ export class SettingTabService extends PluginSettingTab {
     this.cacheService = cacheService;
     this.translationService = translationService;
     this.ttsService = ttsService;
+    this.settingsService = settingsService;
 
     this.getCacheSize();
   }
@@ -48,9 +51,9 @@ export class SettingTabService extends PluginSettingTab {
       .setDesc('API key for translation and text-to-speech services.')
       .addText((text) => {
         text
-          .setValue(settingsService.getApiKey())
+          .setValue(this.settingsService.getApiKey())
           .onChange(async (value) => {
-            settingsService.setApiKey(value);
+            this.settingsService.setApiKey(value);
             await this.plugin.saveSettings();
           })
           .inputEl.setAttribute('type', 'password');
@@ -82,9 +85,9 @@ export class SettingTabService extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown
           .addOptions(options)
-          .setValue(settingsService.getTarget())
+          .setValue(this.settingsService.getTarget())
           .onChange(async (value) => {
-            settingsService.setTarget(value as ELanguage);
+            this.settingsService.setTarget(value as ELanguage);
             await this.plugin.saveSettings();
           });
       });
@@ -95,9 +98,9 @@ export class SettingTabService extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown
           .addOptions(options)
-          .setValue(settingsService.getSource())
+          .setValue(this.settingsService.getSource())
           .onChange(async (value) => {
-            settingsService.setSource(value as ELanguage);
+            this.settingsService.setSource(value as ELanguage);
             await this.plugin.saveSettings();
           });
       });
@@ -114,9 +117,9 @@ export class SettingTabService extends PluginSettingTab {
             [EVoiceOverSpeed.x2]: 'x2',
             [EVoiceOverSpeed.x3]: 'x3',
           })
-          .setValue(settingsService.getVoiceOverSpeed().toString())
+          .setValue(this.settingsService.getVoiceOverSpeed().toString())
           .onChange(async (value): Promise<void> => {
-            settingsService.setVoiceOverSpeed(parseInt(value));
+            this.settingsService.setVoiceOverSpeed(parseInt(value));
             await this.plugin.saveSettings();
           });
       });
@@ -135,9 +138,9 @@ export class SettingTabService extends PluginSettingTab {
             [EPlayVariant.ValueAndTranslation]: 'Value + Translation',
             [EPlayVariant.TranslationAndValue]: 'Translation + Value',
           })
-          .setValue(settingsService.getPlayVariant())
+          .setValue(this.settingsService.getPlayVariant())
           .onChange(async (value): Promise<void> => {
-            settingsService.setPlayVariant(value as EPlayVariant);
+            this.settingsService.setPlayVariant(value as EPlayVariant);
             await this.plugin.saveSettings();
           });
       });
@@ -159,7 +162,7 @@ export class SettingTabService extends PluginSettingTab {
   }
 
   private async check(): Promise<void> {
-    const apiKey = settingsService.getApiKey();
+    const apiKey = this.settingsService.getApiKey();
 
     if (!apiKey) {
       new Notice('No API key entered.');
