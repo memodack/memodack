@@ -137,6 +137,7 @@ export default class MemodackPlugin extends Plugin {
       cacheService,
       translationService,
       ttsService,
+      settingsService,
     );
 
     this.addSettingTab(settingTabService);
