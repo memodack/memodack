@@ -20,6 +20,12 @@ export class SettingTabService extends PluginSettingTab {
   private readonly settingsService: ISettingsService;
   private cacheSize: number = 0;
 
+  private checkSettings!: Setting;
+  private nativeLanguageSettings!: Setting;
+  private documentLanguageSettings!: Setting;
+  private playbackSpeedSettings!: Setting;
+  private playVariantSettings!: Setting;
+
   constructor(
     app: App,
     plugin: TMemodackPlugin,
@@ -53,13 +59,15 @@ export class SettingTabService extends PluginSettingTab {
         text
           .setValue(this.settingsService.getApiKey())
           .onChange(async (value) => {
+            this.controlApiKeyRequirements(value.length >= 39);
+
             this.settingsService.setApiKey(value);
             await this.plugin.saveSettings();
           })
           .inputEl.setAttribute('type', 'password');
       });
 
-    new Setting(containerEl)
+    this.checkSettings = new Setting(containerEl)
       .setName('Connection')
       .setDesc('Check access to services by API key.')
       .addButton((btn) =>
@@ -79,7 +87,7 @@ export class SettingTabService extends PluginSettingTab {
       options[ELanguage[key as keyof typeof ELanguage]] = key;
     });
 
-    new Setting(containerEl)
+    this.nativeLanguageSettings = new Setting(containerEl)
       .setName('Native')
       .setDesc('This is the language you speak natively.')
       .addDropdown((dropdown) => {
@@ -92,7 +100,7 @@ export class SettingTabService extends PluginSettingTab {
           });
       });
 
-    new Setting(containerEl)
+    this.documentLanguageSettings = new Setting(containerEl)
       .setName('Document')
       .setDesc('This is the language of the document.')
       .addDropdown((dropdown) => {
@@ -107,7 +115,7 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl).setName('Voiceover').setHeading();
 
-    new Setting(containerEl)
+    this.playbackSpeedSettings = new Setting(containerEl)
       .setName('Playback speed')
       .setDesc('The speed at which the voiceover will be performed.')
       .addDropdown((dropdown) => {
@@ -126,7 +134,7 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl).setName('Actions').setHeading();
 
-    new Setting(containerEl)
+    this.playVariantSettings = new Setting(containerEl)
       .setName('When pressed play')
       .setDesc('Will be voiced when you click on a part.')
       .addDropdown((dropdown) => {
@@ -159,6 +167,10 @@ export class SettingTabService extends PluginSettingTab {
             cacheSetting.setDesc(prettyBytes(0));
           }),
       );
+
+    this.controlApiKeyRequirements(
+      this.settingsService.getApiKey().length >= 39,
+    );
   }
 
   private async check(): Promise<void> {
@@ -182,5 +194,17 @@ export class SettingTabService extends PluginSettingTab {
       .catch(() => {
         this.cacheSize = 0;
       });
+  }
+
+  private controlApiKeyRequirements(value: boolean): void {
+    [
+      this.checkSettings,
+      this.nativeLanguageSettings,
+      this.documentLanguageSettings,
+      this.playbackSpeedSettings,
+      this.playVariantSettings,
+    ].forEach((item) => {
+      item.setDisabled(!value);
+    });
   }
 }
