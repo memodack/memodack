@@ -153,6 +153,20 @@ export class SettingTabService extends PluginSettingTab {
           });
       });
 
+    new Setting(containerEl).setName('Extra').setHeading();
+
+    new Setting(containerEl)
+      .setName('Divider')
+      .setDesc('Split translation values using the ";" symbol.')
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.settingsService.getTranslationDivider())
+          .onChange(async (value) => {
+            this.settingsService.setTranslationDivider(value);
+            await this.plugin.saveSettings();
+          }),
+      );
+
     new Setting(containerEl).setName('Optimization').setHeading();
 
     const cacheSetting = new Setting(containerEl)

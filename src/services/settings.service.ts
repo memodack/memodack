@@ -6,6 +6,7 @@ export const defaultSettings: TSettings = {
   target: ELanguage.Ukrainian,
   playVariant: EPlayVariant.ValueAndTranslation,
   voiceOverSpeed: EVoiceOverSpeed.x2,
+  translationDivider: true,
 };
 
 export interface ISettingsService {
@@ -14,18 +15,20 @@ export interface ISettingsService {
   getTarget(): ELanguage;
   getPlayVariant(): EPlayVariant;
   getVoiceOverSpeed(): EVoiceOverSpeed;
+  getTranslationDivider(): boolean;
 
   setApiKey(value: string): void;
   setSource(value: ELanguage): void;
   setTarget(value: ELanguage): void;
   setPlayVariant(value: EPlayVariant): void;
   setVoiceOverSpeed(value: EVoiceOverSpeed): void;
+  setTranslationDivider(value: boolean): void;
 
   getSettings(): TSettings;
   setSettings(newSettings: Partial<TSettings>): void;
 }
 
-export class SettingsService {
+export class SettingsService implements ISettingsService {
   private settings: TSettings;
 
   constructor(initialSettings?: Partial<TSettings>) {
@@ -78,6 +81,14 @@ export class SettingsService {
 
   setSettings(newSettings: Partial<TSettings>): void {
     this.settings = { ...this.settings, ...newSettings };
+  }
+
+  getTranslationDivider(): boolean {
+    return this.settings.translationDivider;
+  }
+
+  setTranslationDivider(value: boolean): void {
+    this.settings.translationDivider = value;
   }
 }
 

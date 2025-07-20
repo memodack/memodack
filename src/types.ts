@@ -38,4 +38,5 @@ export type TSettings = {
   target: ELanguage;
   playVariant: EPlayVariant;
   voiceOverSpeed: EVoiceOverSpeed;
+  translationDivider: boolean;
 };
