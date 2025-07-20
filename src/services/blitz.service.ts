@@ -1,3 +1,5 @@
+import { ISettingsService, settingsService } from './settings.service';
+
 import { IPart } from './parts.service';
 
 export interface IBlitz {
@@ -17,8 +19,12 @@ export interface IBlitzService {
 
 export class BlitzService implements IBlitzService {
   private blitzMap = new Map<number, IBlitz>();
-
   private progress = 0;
+  private settingsService: ISettingsService;
+
+  constructor(settingsService: ISettingsService) {
+    this.settingsService = settingsService;
+  }
 
   create(parts: IPart[]): void {
     this.blitzMap.clear();
@@ -30,10 +36,20 @@ export class BlitzService implements IBlitzService {
     shuffleParts.forEach((shufflePartItem, index) => {
       const [n1, n2, n3] = this.getRandomNumbers(shuffleParts.length, index, 3);
 
-      const q1 = shufflePartItem.translation;
-      const q2 = shuffleParts[n1].translation;
-      const q3 = shuffleParts[n2].translation;
-      const q4 = shuffleParts[n3].translation;
+      const isTranslationDivider = this.settingsService.getTranslationDivider();
+
+      const q1 = isTranslationDivider
+        ? this.getRandomSegment(shufflePartItem.translation)
+        : shufflePartItem.translation;
+      const q2 = isTranslationDivider
+        ? this.getRandomSegment(shuffleParts[n1].translation)
+        : shuffleParts[n1].translation;
+      const q3 = isTranslationDivider
+        ? this.getRandomSegment(shuffleParts[n2].translation)
+        : shuffleParts[n2].translation;
+      const q4 = isTranslationDivider
+        ? this.getRandomSegment(shuffleParts[n3].translation)
+        : shuffleParts[n3].translation;
 
       const answers = [q1, q2, q3, q4];
 
@@ -167,6 +183,15 @@ export class BlitzService implements IBlitzService {
 
     return shuffled;
   }
+
+  /**
+   * Split the text to the parts and return randomly one of it.
+   */
+  private getRandomSegment(text: string, divider: string = ';'): string {
+    const parts = text.split(divider).map((item) => item.trim());
+    const index = Math.floor(Math.random() * parts.length);
+    return parts[index];
+  }
 }
 
-export const blitzService = new BlitzService();
+export const blitzService = new BlitzService(settingsService);
