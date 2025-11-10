@@ -1,4 +1,4 @@
-npm run prettier
-npm run lint
-npm run lint:circulars
-npm run test
+pnpm run format
+pnpm run lint
+pnpm run lint:circulars
+pnpm run test

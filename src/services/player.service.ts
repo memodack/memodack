@@ -1,4 +1,4 @@
-import { ISettingsService } from './settings.service';
+import type { ISettingsService } from "./settings.service";
 
 export interface IPlayerService {
   play(audioUrl: string): Promise<void>;
@@ -14,7 +14,7 @@ export class PlayerService implements IPlayerService {
 
   async play(audioUrl: string): Promise<void> {
     if (!audioUrl) {
-      throw new Error('The audioUrl is required for audio playback.');
+      throw new Error("The audioUrl is required for audio playback.");
     }
 
     this.audio.volume = 0;
@@ -28,7 +28,7 @@ export class PlayerService implements IPlayerService {
 
       await new Promise<void>((resolve) => {
         this.audio.addEventListener(
-          'ended',
+          "ended",
           () => {
             resolve();
           },
@@ -36,7 +36,7 @@ export class PlayerService implements IPlayerService {
         );
       });
     } catch (e) {
-      const errorMessage = 'Audio playback error.';
+      const errorMessage = "Audio playback error.";
 
       if (e instanceof Error) {
         console.error(e.message || errorMessage);

@@ -1,9 +1,9 @@
-import { App, Modal } from 'obsidian';
+import { type App, Modal } from "obsidian";
 
-import { IBlitzService } from './blitz.service';
-import { IConductorService } from './conductor.service';
-import { IPart } from './parts.service';
-import { IProgressBarService } from './progress-bar.service';
+import type { IBlitzService } from "./blitz.service";
+import type { IConductorService } from "./conductor.service";
+import type { IPart } from "./parts.service";
+import type { IProgressBarService } from "./progress-bar.service";
 
 export interface IBlitzModalService {
   setParts(parts: IPart[]): void;
@@ -65,16 +65,16 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
     void this.conductorService.playValue(blitz.question);
 
-    let nextButtonEl: HTMLButtonElement | undefined = undefined;
-    let correctOptionEl: HTMLButtonElement | undefined = undefined;
+    let nextButtonEl: HTMLButtonElement | undefined;
+    let correctOptionEl: HTMLButtonElement | undefined;
 
     const answersButtons: HTMLButtonElement[] = [];
 
-    const answersElement = contentEl.createEl('div');
-    answersElement.addClass('memodack___blitz__answers');
+    const answersElement = contentEl.createEl("div");
+    answersElement.addClass("memodack___blitz__answers");
 
     blitz.answers.forEach((item, index) => {
-      const answerButtonElement = answersElement.createEl('button');
+      const answerButtonElement = answersElement.createEl("button");
 
       if (blitz.correctAnswerId === index) {
         correctOptionEl = answerButtonElement;
@@ -83,17 +83,17 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
       answersButtons.push(answerButtonElement);
 
       answerButtonElement.setText(item);
-      answerButtonElement.addEventListener('click', () => {
+      answerButtonElement.addEventListener("click", () => {
         answersButtons.forEach((item) => {
           item.disabled = true;
         });
 
         if (blitz.correctAnswerId === index) {
-          answerButtonElement.addClass('correct');
+          answerButtonElement.addClass("correct");
           void this.conductorService.playTranslation(item);
         } else {
-          answerButtonElement.addClass('wrong');
-          correctOptionEl?.addClass('correct');
+          answerButtonElement.addClass("wrong");
+          correctOptionEl?.addClass("correct");
           this.blitzService.repeatBlitz(id);
         }
 
@@ -115,29 +115,29 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     answersElement.appendChild(this.progressBarService.getElement());
     this.progressBarService.setValue(this.blitzService.getProgress());
 
-    const blitzNext = contentEl.createEl('div');
-    blitzNext.addClass('memodack___blitz__next');
+    const blitzNext = contentEl.createEl("div");
+    blitzNext.addClass("memodack___blitz__next");
 
-    nextButtonEl = blitzNext.createEl('button');
-    nextButtonEl.setText('Next');
+    nextButtonEl = blitzNext.createEl("button");
+    nextButtonEl.setText("Next");
     nextButtonEl.disabled = true;
 
-    nextButtonEl.addEventListener('click', () => {
+    nextButtonEl.addEventListener("click", () => {
       this.createBlitz(id + 1);
     });
   }
 
   private createQuestionElement(question: string): void {
     const { contentEl } = this;
-    const questionH2Element = contentEl.createEl('h2');
+    const questionH2Element = contentEl.createEl("h2");
     questionH2Element.setText(question);
-    questionH2Element.addClass('memodack___blitz__question');
+    questionH2Element.addClass("memodack___blitz__question");
   }
 
   private createTextElement(text: string): void {
     const { contentEl } = this;
-    const questionH2Element = contentEl.createEl('div');
+    const questionH2Element = contentEl.createEl("div");
     questionH2Element.setText(text);
-    questionH2Element.addClass('memodack___blitz__text');
+    questionH2Element.addClass("memodack___blitz__text");
   }
 }

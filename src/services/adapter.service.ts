@@ -1,4 +1,9 @@
-import { DataAdapter, DataWriteOptions, ListedFiles, Stat } from 'obsidian';
+import type {
+  DataAdapter,
+  DataWriteOptions,
+  ListedFiles,
+  Stat,
+} from "obsidian";
 
 export interface IAdapterService {
   exists(normalizedPath: string, sensitive?: boolean): Promise<boolean>;

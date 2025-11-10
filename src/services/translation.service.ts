@@ -1,7 +1,6 @@
-import { Notice, RequestUrlResponsePromise, requestUrl } from 'obsidian';
-
-import { ELanguage } from '../types';
-import { ISettingsService } from './settings.service';
+import { Notice, type RequestUrlResponsePromise, requestUrl } from "obsidian";
+import { ELanguage } from "../types";
+import type { ISettingsService } from "./settings.service";
 
 export interface ITranslationService {
   translate(
@@ -51,7 +50,7 @@ export class TranslationService implements ITranslationService {
       return json.data.translations[0].translatedText || null;
     } catch (e) {
       console.error(
-        `Failed to process translation. ${e instanceof Error ? e.message : ''}`,
+        `Failed to process translation. ${e instanceof Error ? e.message : ""}`,
       );
       return null;
     }
@@ -62,18 +61,18 @@ export class TranslationService implements ITranslationService {
       const response = await this.translate(
         ELanguage.English,
         ELanguage.Ukrainian,
-        'ping',
+        "ping",
       );
 
       if (!response) {
-        new Notice('The translation service is not working.');
+        new Notice("The translation service is not working.");
         return;
       }
 
-      new Notice('The translation service is working.');
+      new Notice("The translation service is working.");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      new Notice('The translation service is not working.');
+    } catch (_e) {
+      new Notice("The translation service is not working.");
     }
   }
 
@@ -92,7 +91,7 @@ export class TranslationService implements ITranslationService {
       q: text,
       source,
       target,
-      format: 'text',
+      format: "text",
     };
 
     return JSON.stringify(body);
@@ -100,9 +99,9 @@ export class TranslationService implements ITranslationService {
 
   private request(url: string, body: string): RequestUrlResponsePromise {
     return requestUrl({
-      method: 'POST',
+      method: "POST",
       url,
-      contentType: 'application/json',
+      contentType: "application/json",
       body,
     });
   }

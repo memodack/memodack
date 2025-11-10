@@ -1,4 +1,4 @@
-import { TFile, TFolder, Vault } from 'obsidian';
+import type { TFile, TFolder, Vault } from "obsidian";
 
 export interface IVaultService {
   read(file: TFile): Promise<string>;

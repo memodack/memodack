@@ -10,8 +10,8 @@ export class ProgressBarService implements IProgressBarService {
   private _progressElement: HTMLProgressElement | null = null;
 
   create(contentEl: HTMLElement, max: number, value: number): void {
-    this._progressElement = contentEl.createEl('progress');
-    this._progressElement.addClass('memodack___blitz__progress');
+    this._progressElement = contentEl.createEl("progress");
+    this._progressElement.addClass("memodack___blitz__progress");
 
     this.setMax(max);
     this.setValue(value);
@@ -35,7 +35,7 @@ export class ProgressBarService implements IProgressBarService {
 
   private get progressElement(): HTMLProgressElement {
     if (!this._progressElement) {
-      throw new Error('The progress element has not been created.');
+      throw new Error("The progress element has not been created.");
     }
 
     return this._progressElement;

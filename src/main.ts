@@ -1,27 +1,26 @@
-import { Plugin, addIcon } from 'obsidian';
-
-import { AdapterService } from './services/adapter.service';
-import { AudioService } from './services/audio.service';
-import { BlitzModalService } from './services/blitz-modal.service';
-import { CacheService } from './services/cache.service';
-import { ConductorService } from './services/conductor.service';
-import { EditorService } from './services/editor.service';
-import { ManifestService } from './services/manifest.service';
-import { MppService } from './services/mpp.service';
-import { PartsService } from './services/parts.service';
-import { PathsService } from './services/paths.service';
-import { PlayerService } from './services/player.service';
-import { RibbonIconService } from './services/ribbon-icon.service';
-import { SettingTabService } from './services/setting-tab.service';
-import { TSettings } from './types';
-import { TranslateCommandService } from './services/translate-command.service';
-import { TranslationService } from './services/translation.service';
-import { TtsService } from './services/tts.service';
-import { VaultService } from './services/vault.service';
-import { WorkspaceService } from './services/workspace.service';
-import { blitzService } from './services/blitz.service';
-import { progressBarService } from './services/progress-bar.service';
-import { settingsService } from './services/settings.service';
+import { addIcon, Plugin } from "obsidian";
+import { AdapterService } from "./services/adapter.service";
+import { AudioService } from "./services/audio.service";
+import { blitzService } from "./services/blitz.service";
+import { BlitzModalService } from "./services/blitz-modal.service";
+import { CacheService } from "./services/cache.service";
+import { ConductorService } from "./services/conductor.service";
+import { EditorService } from "./services/editor.service";
+import { ManifestService } from "./services/manifest.service";
+import { MppService } from "./services/mpp.service";
+import { PartsService } from "./services/parts.service";
+import { PathsService } from "./services/paths.service";
+import { PlayerService } from "./services/player.service";
+import { progressBarService } from "./services/progress-bar.service";
+import { RibbonIconService } from "./services/ribbon-icon.service";
+import { SettingTabService } from "./services/setting-tab.service";
+import { settingsService } from "./services/settings.service";
+import { TranslateCommandService } from "./services/translate-command.service";
+import { TranslationService } from "./services/translation.service";
+import { TtsService } from "./services/tts.service";
+import { VaultService } from "./services/vault.service";
+import { WorkspaceService } from "./services/workspace.service";
+import type { TSettings } from "./types";
 
 export default class MemodackPlugin extends Plugin {
   async loadSettings(): Promise<void> {

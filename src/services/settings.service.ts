@@ -1,7 +1,12 @@
-import { ELanguage, EPlayVariant, EVoiceOverSpeed, TSettings } from '../types';
+import {
+  ELanguage,
+  EPlayVariant,
+  EVoiceOverSpeed,
+  type TSettings,
+} from "../types";
 
 export const defaultSettings: TSettings = {
-  apiKey: '',
+  apiKey: "",
   source: ELanguage.English,
   target: ELanguage.Ukrainian,
   playVariant: EPlayVariant.ValueAndTranslation,

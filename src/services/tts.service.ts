@@ -1,7 +1,6 @@
-import { Notice, RequestUrlResponsePromise, requestUrl } from 'obsidian';
-
-import { ELanguage } from '../types';
-import { ISettingsService } from './settings.service';
+import { Notice, type RequestUrlResponsePromise, requestUrl } from "obsidian";
+import { ELanguage } from "../types";
+import type { ISettingsService } from "./settings.service";
 
 export interface ITtsService {
   tts(language: ELanguage, value: string): Promise<string | null>;
@@ -39,7 +38,7 @@ export class TtsService implements ITtsService {
       return json.audioContent || null;
     } catch (e) {
       console.error(
-        `Failed to process TTS. ${e instanceof Error ? e.message : ''}`,
+        `Failed to process TTS. ${e instanceof Error ? e.message : ""}`,
       );
       return null;
     }
@@ -47,17 +46,17 @@ export class TtsService implements ITtsService {
 
   async test(): Promise<void> {
     try {
-      const response = await this.tts(ELanguage.English, 'ping');
+      const response = await this.tts(ELanguage.English, "ping");
 
       if (!response) {
-        new Notice('The text-to-speech service is not working.');
+        new Notice("The text-to-speech service is not working.");
         return;
       }
 
-      new Notice('The text-to-speech service is working.');
+      new Notice("The text-to-speech service is working.");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      new Notice('The text-to-speech service is not working.');
+    } catch (_e) {
+      new Notice("The text-to-speech service is not working.");
     }
   }
 
@@ -76,9 +75,9 @@ export class TtsService implements ITtsService {
       input: { text: value },
       voice: {
         languageCode: language,
-        ssmlGender: 'NEUTRAL',
+        ssmlGender: "NEUTRAL",
       },
-      audioConfig: { audioEncoding: 'MP3' },
+      audioConfig: { audioEncoding: "MP3" },
     };
 
     return JSON.stringify(body);
@@ -86,9 +85,9 @@ export class TtsService implements ITtsService {
 
   private request(url: string, body: string): RequestUrlResponsePromise {
     return requestUrl({
-      method: 'POST',
+      method: "POST",
       url,
-      contentType: 'application/json',
+      contentType: "application/json",
       body,
     });
   }

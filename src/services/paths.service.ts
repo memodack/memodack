@@ -1,5 +1,5 @@
-import { IManifestService } from './manifest.service';
-import { IVaultService } from './vault.service';
+import type { IManifestService } from "./manifest.service";
+import type { IVaultService } from "./vault.service";
 
 export interface IPathsService {
   getCacheDirPath(): string;

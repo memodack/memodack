@@ -7,35 +7,33 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production node ./esbuild.config.mjs",
     "dev": "cross-env NODE_ENV=development node ./esbuild.config.mjs",
-    "lint": "eslint .",
+    "format": "biome format",
+    "format:write": "biome format --write",
+    "lint": "biome lint",
     "lint:circulars": "madge --circular --extensions ts ./",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
+    "lint:write": "biome lint --write",
     "test": "jest --forceExit"
   },
   "dependencies": {
     "pretty-bytes": "^6.1.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
-    "@eslint/js": "^9.23.0",
     "@types/jest": "^29.5.14",
     "builtin-modules": "^5.0.0",
     "clean-css": "^5.3.3",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "esbuild": "^0.25.3",
-    "eslint": "^9.23.0",
-    "eslint-plugin-jest": "^28.11.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "madge": "^8.0.0",
     "obsidian": "^1.8.7",
-    "prettier": "^3.5.3",
     "ts-jest": "^29.3.2",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0"
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "pnpm": ">=10.17.0"
   }
 }

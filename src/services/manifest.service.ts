@@ -1,4 +1,4 @@
-import { PluginManifest } from 'obsidian';
+import type { PluginManifest } from "obsidian";
 
 export interface IManifestService {
   getId(): string;

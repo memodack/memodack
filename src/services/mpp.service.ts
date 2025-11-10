@@ -1,4 +1,4 @@
-import { IConductorService } from './conductor.service';
+import type { IConductorService } from "./conductor.service";
 
 export interface IMppService {
   getPostProcessor(element: HTMLElement): void;
@@ -15,10 +15,13 @@ export class MppService implements IMppService {
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
     const nodesToReplace = [];
-    let node;
+    let node: Node | null;
 
-    while ((node = walker.nextNode())) {
-      if (node.nodeValue && node.nodeValue.match(/\{.*?\|.*?\}/)) {
+    while (true) {
+      node = walker.nextNode() as Text | null;
+      if (!node) break;
+
+      if (node.nodeValue?.match(/\{.*?\|.*?\}/)) {
         nodesToReplace.push(node);
       }
     }
@@ -47,11 +50,11 @@ export class MppService implements IMppService {
           const value = match[1];
           const translation = match[2];
 
-          const span = createEl('span', {
-            cls: 'memodack___syntax',
+          const span = createEl("span", {
+            cls: "memodack___syntax",
             text: value,
             attr: {
-              'data-translation': match[2],
+              "data-translation": match[2],
             },
           });
 

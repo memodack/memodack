@@ -1,15 +1,15 @@
-import { IConductorService } from './conductor.service';
-import { IEditorService } from './editor.service';
-import { ISettingsService } from './settings.service';
-import { ITranslationService } from './translation.service';
+import type { IConductorService } from "./conductor.service";
+import type { IEditorService } from "./editor.service";
+import type { ISettingsService } from "./settings.service";
+import type { ITranslationService } from "./translation.service";
 
 export interface ITranslateCommandService {
   getCallback: () => Promise<void>;
 }
 
 export class TranslateCommandService implements ITranslateCommandService {
-  static readonly id = 'translate';
-  static readonly name = 'Translate';
+  static readonly id = "translate";
+  static readonly name = "Translate";
 
   private editorService: IEditorService;
   private translationService: ITranslationService;

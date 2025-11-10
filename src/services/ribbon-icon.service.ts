@@ -1,8 +1,8 @@
-import { IPart, IPartsService } from './parts.service';
+import { Notice } from "obsidian";
 
-import { BlitzModalService } from './blitz-modal.service';
-import { IWorkspaceService } from './workspace.service';
-import { Notice } from 'obsidian';
+import type { BlitzModalService } from "./blitz-modal.service";
+import type { IPart, IPartsService } from "./parts.service";
+import type { IWorkspaceService } from "./workspace.service";
 
 export interface IRibbonIconService {
   getCallback: () => Promise<void>;
@@ -15,8 +15,8 @@ const svg = `
 `;
 
 export class RibbonIconService implements IRibbonIconService {
-  static readonly id = 'memodack';
-  static readonly title = 'Memodack';
+  static readonly id = "memodack";
+  static readonly title = "Memodack";
   static readonly svg = svg;
 
   private workspaceService: IWorkspaceService;
@@ -37,7 +37,7 @@ export class RibbonIconService implements IRibbonIconService {
     const isReadingMode = this.workspaceService.isReadingMode();
 
     if (!isReadingMode) {
-      new Notice('Only in Reading Mode.');
+      new Notice("Only in Reading Mode.");
       return;
     }
 
@@ -50,12 +50,12 @@ export class RibbonIconService implements IRibbonIconService {
     }
 
     if (!parts.length) {
-      new Notice('No parts provided.');
+      new Notice("No parts provided.");
       return;
     }
 
     if (parts.length < 4) {
-      new Notice('At least 4 parts required.');
+      new Notice("At least 4 parts required.");
       return;
     }
 

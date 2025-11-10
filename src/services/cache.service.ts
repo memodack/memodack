@@ -1,6 +1,6 @@
-import { IAdapterService } from './adapter.service';
-import { IPathsService } from './paths.service';
-import { IVaultService } from './vault.service';
+import type { IAdapterService } from "./adapter.service";
+import type { IPathsService } from "./paths.service";
+import type { IVaultService } from "./vault.service";
 
 export interface ICacheService {
   add(key: string, value: string): Promise<void>;
@@ -37,7 +37,7 @@ export class CacheService implements ICacheService {
       }
     } catch (e) {
       const errorMessage = `Failed to add cache for key '${key}'.`;
-      console.error(errorMessage, e instanceof Error ? e.message : '');
+      console.error(errorMessage, e instanceof Error ? e.message : "");
     }
   }
 
@@ -52,7 +52,7 @@ export class CacheService implements ICacheService {
       return await this.adapterService.read(`${cacheDirPath}/${key}`);
     } catch (e) {
       const errorMessage = `Failed to get a cache by '${key}' key.`;
-      console.error(errorMessage, e instanceof Error ? e.message : '');
+      console.error(errorMessage, e instanceof Error ? e.message : "");
 
       return null;
     }
@@ -80,7 +80,7 @@ export class CacheService implements ICacheService {
       return totalSize;
     } catch (e) {
       console.error(
-        `Failed to retrieve the cache directory size. ${e instanceof Error ? e.message : ''}`,
+        `Failed to retrieve the cache directory size. ${e instanceof Error ? e.message : ""}`,
       );
 
       return 0;
@@ -98,7 +98,7 @@ export class CacheService implements ICacheService {
       await this.adapterService.rmdir(cacheDirPath, true);
     } catch (e) {
       console.error(
-        `Failed to clear the cache. ${e instanceof Error ? e.message : ''}`,
+        `Failed to clear the cache. ${e instanceof Error ? e.message : ""}`,
       );
     }
   }

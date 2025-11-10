@@ -1,6 +1,5 @@
-import { ISettingsService, settingsService } from './settings.service';
-
-import { IPart } from './parts.service';
+import type { IPart } from "./parts.service";
+import { type ISettingsService, settingsService } from "./settings.service";
 
 export interface IBlitz {
   correctAnswerId: number;
@@ -55,9 +54,7 @@ export class BlitzService implements IBlitzService {
 
       const shuffleAnswers = this.shuffle(answers);
 
-      const correctAnswerId = shuffleAnswers.findIndex(
-        (shuffleAnswerItem) => shuffleAnswerItem === q1,
-      );
+      const correctAnswerId = shuffleAnswers.indexOf(q1);
 
       this.blitzMap.set(index, {
         correctAnswerId,
@@ -93,9 +90,7 @@ export class BlitzService implements IBlitzService {
 
     const blitzTranslation = blitz.answers[blitz.correctAnswerId];
 
-    const correctAnswerId = shuffleAnswers.findIndex(
-      (shuffleAnswerItem) => shuffleAnswerItem === blitzTranslation,
-    );
+    const correctAnswerId = shuffleAnswers.indexOf(blitzTranslation);
 
     this.blitzMap.set(this.blitzMap.size, {
       correctAnswerId,
@@ -132,7 +127,7 @@ export class BlitzService implements IBlitzService {
   ): number[] {
     if (maxNumber < 1 || count < 1) {
       throw new Error(
-        'The maxNumber must be greater than or equal to 1 and count must be greater than or equal to 1.',
+        "The maxNumber must be greater than or equal to 1 and count must be greater than or equal to 1.",
       );
     }
 
@@ -145,7 +140,7 @@ export class BlitzService implements IBlitzService {
 
     if (availableNumbers.size < count) {
       throw new Error(
-        'Not enough unique numbers available to satisfy the count.',
+        "Not enough unique numbers available to satisfy the count.",
       );
     }
 
@@ -167,7 +162,7 @@ export class BlitzService implements IBlitzService {
    */
   private shuffle<T>(array: T[]): T[] {
     if (!Array.isArray(array)) {
-      throw new Error('Input array cannot be null or undefined.');
+      throw new Error("Input array cannot be null or undefined.");
     }
 
     // Create a copy of the array to avoid modifying the original
@@ -187,7 +182,7 @@ export class BlitzService implements IBlitzService {
   /**
    * Split the text to the parts and return randomly one of it.
    */
-  private getRandomSegment(text: string, divider: string = ';'): string {
+  private getRandomSegment(text: string, divider: string = ";"): string {
     const parts = text.split(divider).map((item) => item.trim());
     const index = Math.floor(Math.random() * parts.length);
     return parts[index];

@@ -1,5 +1,5 @@
-import { IVaultService } from './vault.service';
-import { IWorkspaceService } from './workspace.service';
+import type { IVaultService } from "./vault.service";
+import type { IWorkspaceService } from "./workspace.service";
 
 export interface IPart {
   value: string;
@@ -41,7 +41,7 @@ export class PartsService implements IPartsService {
 
     const parts: IPart[] = [];
 
-    const texts = content.split('\n');
+    const texts = content.split("\n");
 
     // Generate parts array
     matches.forEach((match) => {
@@ -90,7 +90,7 @@ export class PartsService implements IPartsService {
 
     if (selection && selection.rangeCount > 0 && selection.toString().length) {
       const ranges = selection.getRangeAt(0);
-      const spans = document.querySelectorAll('.memodack___syntax');
+      const spans = document.querySelectorAll(".memodack___syntax");
 
       // Iterate over all <span> elements
       spans.forEach((span) => {
@@ -99,8 +99,8 @@ export class PartsService implements IPartsService {
 
         // Check if the selection intersects with the <span> element
         if (ranges.intersectsNode(span)) {
-          const beforeText = span.previousSibling?.textContent?.trim() || '';
-          const afterText = span.nextSibling?.textContent?.trim() || '';
+          const beforeText = span.previousSibling?.textContent?.trim() || "";
+          const afterText = span.nextSibling?.textContent?.trim() || "";
 
           const value = span.textContent;
 
@@ -108,7 +108,7 @@ export class PartsService implements IPartsService {
             return;
           }
 
-          const translation = span.getAttribute('data-translation');
+          const translation = span.getAttribute("data-translation");
 
           const text = `${beforeText} ${value} ${afterText}`.trim();
 

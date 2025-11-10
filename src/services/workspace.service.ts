@@ -1,4 +1,4 @@
-import { MarkdownView, TFile, Workspace } from 'obsidian';
+import { MarkdownView, type TFile, type Workspace } from "obsidian";
 
 export interface IWorkspaceService {
   getActiveFile(): TFile | null;
@@ -18,7 +18,7 @@ export class WorkspaceService implements IWorkspaceService {
 
   isReadingMode(): boolean {
     return (
-      this.workspace.getActiveViewOfType(MarkdownView)?.getMode() === 'preview'
+      this.workspace.getActiveViewOfType(MarkdownView)?.getMode() === "preview"
     );
   }
 }

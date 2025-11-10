@@ -1,16 +1,15 @@
-import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
+import { type App, Notice, PluginSettingTab, Setting } from "obsidian";
+import prettyBytes from "pretty-bytes";
 import {
   ELanguage,
   EPlayVariant,
   EVoiceOverSpeed,
-  TMemodackPlugin,
-} from '../types';
-
-import { ICacheService } from './cache.service';
-import { ISettingsService } from './settings.service';
-import { ITranslationService } from './translation.service';
-import { ITtsService } from './tts.service';
-import prettyBytes from 'pretty-bytes';
+  type TMemodackPlugin,
+} from "../types";
+import type { ICacheService } from "./cache.service";
+import type { ISettingsService } from "./settings.service";
+import type { ITranslationService } from "./translation.service";
+import type { ITtsService } from "./tts.service";
 
 export class SettingTabService extends PluginSettingTab {
   private readonly plugin: TMemodackPlugin;
@@ -50,11 +49,11 @@ export class SettingTabService extends PluginSettingTab {
 
     containerEl.empty();
 
-    new Setting(containerEl).setName('Provider (Google)').setHeading();
+    new Setting(containerEl).setName("Provider (Google)").setHeading();
 
     new Setting(containerEl)
-      .setName('API Key')
-      .setDesc('API key for translation and text-to-speech services.')
+      .setName("API Key")
+      .setDesc("API key for translation and text-to-speech services.")
       .addText((text) => {
         text
           .setValue(this.settingsService.getApiKey())
@@ -64,22 +63,22 @@ export class SettingTabService extends PluginSettingTab {
             this.settingsService.setApiKey(value);
             await this.plugin.saveSettings();
           })
-          .inputEl.setAttribute('type', 'password');
+          .inputEl.setAttribute("type", "password");
       });
 
     this.checkSettings = new Setting(containerEl)
-      .setName('Connection')
-      .setDesc('Check access to services by API key.')
+      .setName("Connection")
+      .setDesc("Check access to services by API key.")
       .addButton((btn) =>
         btn
-          .setButtonText('Check')
+          .setButtonText("Check")
           .setCta()
           .onClick(async () => {
             await this.check();
           }),
       );
 
-    new Setting(containerEl).setName('Language').setHeading();
+    new Setting(containerEl).setName("Language").setHeading();
 
     const options: Record<string, string> = {};
 
@@ -88,8 +87,8 @@ export class SettingTabService extends PluginSettingTab {
     });
 
     this.nativeLanguageSettings = new Setting(containerEl)
-      .setName('Native')
-      .setDesc('This is the language you speak natively.')
+      .setName("Native")
+      .setDesc("This is the language you speak natively.")
       .addDropdown((dropdown) => {
         dropdown
           .addOptions(options)
@@ -101,8 +100,8 @@ export class SettingTabService extends PluginSettingTab {
       });
 
     this.documentLanguageSettings = new Setting(containerEl)
-      .setName('Document')
-      .setDesc('This is the language of the document.')
+      .setName("Document")
+      .setDesc("This is the language of the document.")
       .addDropdown((dropdown) => {
         dropdown
           .addOptions(options)
@@ -113,38 +112,38 @@ export class SettingTabService extends PluginSettingTab {
           });
       });
 
-    new Setting(containerEl).setName('Voiceover').setHeading();
+    new Setting(containerEl).setName("Voiceover").setHeading();
 
     this.playbackSpeedSettings = new Setting(containerEl)
-      .setName('Playback speed')
-      .setDesc('The speed at which the voiceover will be performed.')
+      .setName("Playback speed")
+      .setDesc("The speed at which the voiceover will be performed.")
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
-            [EVoiceOverSpeed.Normal]: 'Normal',
-            [EVoiceOverSpeed.x2]: 'x2',
-            [EVoiceOverSpeed.x3]: 'x3',
+            [EVoiceOverSpeed.Normal]: "Normal",
+            [EVoiceOverSpeed.x2]: "x2",
+            [EVoiceOverSpeed.x3]: "x3",
           })
           .setValue(this.settingsService.getVoiceOverSpeed().toString())
           .onChange(async (value): Promise<void> => {
-            this.settingsService.setVoiceOverSpeed(parseInt(value));
+            this.settingsService.setVoiceOverSpeed(parseInt(value, 10));
             await this.plugin.saveSettings();
           });
       });
 
-    new Setting(containerEl).setName('Actions').setHeading();
+    new Setting(containerEl).setName("Actions").setHeading();
 
     this.playVariantSettings = new Setting(containerEl)
-      .setName('When pressed play')
-      .setDesc('Will be voiced when you click on a part.')
+      .setName("When pressed play")
+      .setDesc("Will be voiced when you click on a part.")
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
-            [EPlayVariant.Nothing]: 'Nothing',
-            [EPlayVariant.Value]: 'Value',
-            [EPlayVariant.Translation]: 'Translation',
-            [EPlayVariant.ValueAndTranslation]: 'Value + Translation',
-            [EPlayVariant.TranslationAndValue]: 'Translation + Value',
+            [EPlayVariant.Nothing]: "Nothing",
+            [EPlayVariant.Value]: "Value",
+            [EPlayVariant.Translation]: "Translation",
+            [EPlayVariant.ValueAndTranslation]: "Value + Translation",
+            [EPlayVariant.TranslationAndValue]: "Translation + Value",
           })
           .setValue(this.settingsService.getPlayVariant())
           .onChange(async (value): Promise<void> => {
@@ -153,10 +152,10 @@ export class SettingTabService extends PluginSettingTab {
           });
       });
 
-    new Setting(containerEl).setName('Extra').setHeading();
+    new Setting(containerEl).setName("Extra").setHeading();
 
     new Setting(containerEl)
-      .setName('Divider')
+      .setName("Divider")
       .setDesc('Split translation values using the ";" symbol.')
       .addToggle((toggle) =>
         toggle
@@ -167,14 +166,14 @@ export class SettingTabService extends PluginSettingTab {
           }),
       );
 
-    new Setting(containerEl).setName('Optimization').setHeading();
+    new Setting(containerEl).setName("Optimization").setHeading();
 
     const cacheSetting = new Setting(containerEl)
-      .setName('Cache')
+      .setName("Cache")
       .setDesc(prettyBytes(this.cacheSize))
       .addButton((btn) =>
         btn
-          .setButtonText('Clear')
+          .setButtonText("Clear")
           .setCta()
           .onClick(async () => {
             await this.cacheService.clear();
@@ -191,7 +190,7 @@ export class SettingTabService extends PluginSettingTab {
     const apiKey = this.settingsService.getApiKey();
 
     if (!apiKey) {
-      new Notice('No API key entered.');
+      new Notice("No API key entered.");
       return;
     }
 

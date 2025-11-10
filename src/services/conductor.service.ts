@@ -1,6 +1,6 @@
-import { EPlayVariant } from '../types';
-import { IAudioService } from './audio.service';
-import { ISettingsService } from './settings.service';
+import { EPlayVariant } from "../types";
+import type { IAudioService } from "./audio.service";
+import type { ISettingsService } from "./settings.service";
 
 export interface IConductorService {
   playValue(value: string): Promise<void>;

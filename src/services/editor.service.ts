@@ -1,4 +1,4 @@
-import { Editor } from 'obsidian';
+import type { Editor } from "obsidian";
 
 export interface IEditorService {
   getSelection(): string;
