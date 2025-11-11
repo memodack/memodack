@@ -23,73 +23,88 @@ import { VaultService } from "./services/vault.service";
 import { WorkspaceService } from "./services/workspace.service";
 import type { TMemodackPlugin } from "./types";
 
-export function registerValues(plugin: TMemodackPlugin) {
-  const values: Array<[string, unknown]> = [
-    ["plugin", plugin],
-    ["app", plugin.app],
-    ["Vault", plugin.app.vault],
-    ["PluginManifest", plugin.manifest],
-    ["DataAdapter", plugin.app.vault.adapter],
-    ["Workspace", plugin.app.workspace],
-  ];
-
-  values.forEach(([token, value]) => {
-    container.register(token, { useValue: value });
-  });
+export interface IRegister {
+  registerValues(plugin: TMemodackPlugin): void;
+  registerServices(): void;
+  registerEditor(editor: Editor): void;
+  getSettingsService(): ISettingsService;
+  getMppService(): IMppService;
+  getSettingTabService(): SettingTabService;
+  getRibbonIconService(): IRibbonIconService;
+  getTranslateCommandService(): ITranslateCommandService;
 }
 
-export function registerServices() {
-  const services: Array<[string, any]> = [
-    ["ISettingsService", SettingsService],
-    ["IEditorService", EditorService],
-    ["IManifestService", ManifestService],
-    ["IVaultService", VaultService],
-    ["IWorkspaceService", WorkspaceService],
-    ["IPathsService", PathsService],
-    ["ICacheService", CacheService],
-    ["IConductorService", ConductorService],
-    ["IMppService", MppService],
-    ["ITranslationService", TranslationService],
-    ["ITranslateCommandService", TranslateCommandService],
-    ["IPartsService", PartsService],
-    ["IPlayerService", PlayerService],
-    ["IAudioService", AudioService],
-    ["ITtsService", TtsService],
-    ["IProgressBarService", ProgressBarService],
-    ["SettingTabService", SettingTabService],
-    ["IBlitzModalService", BlitzModalService],
-    ["IBlitzService", BlitzService],
-    ["IRibbonIconService", RibbonIconService],
-    ["IAdapterService", AdapterService],
-  ];
+export class Register implements IRegister {
+  registerValues(plugin: TMemodackPlugin): void {
+    const values: Array<[string, unknown]> = [
+      ["plugin", plugin],
+      ["app", plugin.app],
+      ["Vault", plugin.app.vault],
+      ["PluginManifest", plugin.manifest],
+      ["DataAdapter", plugin.app.vault.adapter],
+      ["Workspace", plugin.app.workspace],
+    ];
 
-  services.forEach(([token, value]) => {
-    container.registerSingleton(token, value);
-  });
+    values.forEach(([token, value]) => {
+      container.register(token, { useValue: value });
+    });
+  }
+
+  registerServices(): void {
+    const services: Array<[string, any]> = [
+      ["ISettingsService", SettingsService],
+      ["IEditorService", EditorService],
+      ["IManifestService", ManifestService],
+      ["IVaultService", VaultService],
+      ["IWorkspaceService", WorkspaceService],
+      ["IPathsService", PathsService],
+      ["ICacheService", CacheService],
+      ["IConductorService", ConductorService],
+      ["IMppService", MppService],
+      ["ITranslationService", TranslationService],
+      ["ITranslateCommandService", TranslateCommandService],
+      ["IPartsService", PartsService],
+      ["IPlayerService", PlayerService],
+      ["IAudioService", AudioService],
+      ["ITtsService", TtsService],
+      ["IProgressBarService", ProgressBarService],
+      ["SettingTabService", SettingTabService],
+      ["IBlitzModalService", BlitzModalService],
+      ["IBlitzService", BlitzService],
+      ["IRibbonIconService", RibbonIconService],
+      ["IAdapterService", AdapterService],
+    ];
+
+    services.forEach(([token, value]) => {
+      container.registerSingleton(token, value);
+    });
+  }
+
+  registerEditor(editor: Editor): void {
+    container.register<Editor>("Editor", {
+      useValue: editor,
+    });
+  }
+
+  getSettingsService(): ISettingsService {
+    return container.resolve<ISettingsService>("ISettingsService");
+  }
+
+  getMppService(): IMppService {
+    return container.resolve<IMppService>("IMppService");
+  }
+
+  getSettingTabService(): SettingTabService {
+    return container.resolve<SettingTabService>("SettingTabService");
+  }
+
+  getRibbonIconService(): IRibbonIconService {
+    return container.resolve<IRibbonIconService>("IRibbonIconService");
+  }
+
+  getTranslateCommandService(): ITranslateCommandService {
+    return container.resolve<ITranslateCommandService>("ITranslateCommandService");
+  }
 }
 
-export function registerEditor(editor: Editor): void {
-  container.register<Editor>("Editor", {
-    useValue: editor,
-  });
-}
-
-export function getSettingsService(): ISettingsService {
-  return container.resolve<ISettingsService>("ISettingsService");
-}
-
-export function getMppService(): IMppService {
-  return container.resolve<IMppService>("IMppService");
-}
-
-export function getSettingTabService(): SettingTabService {
-  return container.resolve<SettingTabService>("SettingTabService");
-}
-
-export function getRibbonIconService(): IRibbonIconService {
-  return container.resolve<IRibbonIconService>("IRibbonIconService");
-}
-
-export function getTranslateCommandService(): ITranslateCommandService {
-  return container.resolve<ITranslateCommandService>("ITranslateCommandService");
-}
+export const register = new Register();

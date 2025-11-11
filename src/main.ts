@@ -1,48 +1,39 @@
 import "reflect-metadata";
 import { addIcon, Plugin } from "obsidian";
-import {
-  getMppService,
-  getRibbonIconService,
-  getSettingsService,
-  getSettingTabService,
-  getTranslateCommandService,
-  registerEditor,
-  registerServices,
-  registerValues,
-} from "./register";
+import { register } from "./register";
 import type { TSettings } from "./types";
 
 export default class MemodackPlugin extends Plugin {
   async loadSettings(): Promise<void> {
     const settings = (await this.loadData()) as TSettings;
-    getSettingsService().setSettings(settings);
+    register.getSettingsService().setSettings(settings);
   }
 
   async saveSettings(): Promise<void> {
-    await this.saveData(getSettingsService().getSettings());
+    await this.saveData(register.getSettingsService().getSettings());
   }
 
   async onload(): Promise<void> {
-    registerValues(this);
-    registerServices();
+    register.registerValues(this);
+    register.registerServices();
 
     await this.loadSettings();
 
-    addIcon(this.manifest.id, getRibbonIconService().getIcon());
+    addIcon(this.manifest.id, register.getRibbonIconService().getIcon());
 
-    this.addSettingTab(getSettingTabService());
+    this.addSettingTab(register.getSettingTabService());
 
     this.addCommand({
       id: "translate",
       name: "Translate",
       editorCallback: (editor) => {
-        registerEditor(editor);
-        return getTranslateCommandService().getCallback();
+        register.registerEditor(editor);
+        return register.getTranslateCommandService().getCallback();
       },
     });
 
-    this.registerMarkdownPostProcessor(getMppService().getPostProcessor);
+    this.registerMarkdownPostProcessor(register.getMppService().getPostProcessor);
 
-    this.addRibbonIcon(this.manifest.id, this.manifest.name, getRibbonIconService().getCallback);
+    this.addRibbonIcon(this.manifest.id, this.manifest.name, register.getRibbonIconService().getCallback);
   }
 }
