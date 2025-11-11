@@ -1,4 +1,5 @@
 import { Notice, type RequestUrlResponsePromise, requestUrl } from "obsidian";
+import { inject, singleton } from "tsyringe";
 import { ELanguage } from "../types";
 import type { ISettingsService } from "./settings.service";
 
@@ -11,12 +12,12 @@ export interface ITtsResponse {
   audioContent: string;
 }
 
+@singleton()
 export class TtsService implements ITtsService {
-  private settingsService: ISettingsService;
-
-  constructor(settingsService: ISettingsService) {
-    this.settingsService = settingsService;
-  }
+  constructor(
+    @inject("ISettingsService")
+    private readonly settingsService: ISettingsService,
+  ) {}
 
   async tts(language: ELanguage, value: string): Promise<string | null> {
     try {
@@ -28,18 +29,13 @@ export class TtsService implements ITtsService {
 
       const body = this.getBody(value, language);
 
-      const response: { json: Promise<ITtsResponse> } = await this.request(
-        url,
-        body,
-      );
+      const response: { json: Promise<ITtsResponse> } = await this.request(url, body);
 
       const json = await response.json;
 
       return json.audioContent || null;
     } catch (e) {
-      console.error(
-        `Failed to process TTS. ${e instanceof Error ? e.message : ""}`,
-      );
+      console.error(`Failed to process TTS. ${e instanceof Error ? e.message : ""}`);
       return null;
     }
   }

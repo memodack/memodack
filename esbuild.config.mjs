@@ -1,5 +1,5 @@
 import { existsSync, watchFile } from "node:fs";
-import { copyFile, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { exit } from "node:process";
 import builtins from "builtin-modules";
@@ -15,6 +15,8 @@ const stylesCssFilePath = "src/styles.css";
 if (existsSync(outdirPath)) {
   await rm(outdirPath, { recursive: true, force: true });
 }
+
+await mkdir(outdirPath);
 
 const stylesCopy = async () => {
   const css = await readFile(stylesCssFilePath, "utf8");

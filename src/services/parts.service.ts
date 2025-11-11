@@ -1,3 +1,4 @@
+import { inject, singleton } from "tsyringe";
 import type { IVaultService } from "./vault.service";
 import type { IWorkspaceService } from "./workspace.service";
 
@@ -12,17 +13,13 @@ export interface IPartsService {
   getSelectedParts(): IPart[];
 }
 
+@singleton()
 export class PartsService implements IPartsService {
-  private vaultService: IVaultService;
-  private workspaceService: IWorkspaceService;
-
   constructor(
-    vaultService: IVaultService,
-    workspaceService: IWorkspaceService,
-  ) {
-    this.vaultService = vaultService;
-    this.workspaceService = workspaceService;
-  }
+    @inject("IVaultService") private readonly vaultService: IVaultService,
+    @inject("IWorkspaceService")
+    private readonly workspaceService: IWorkspaceService,
+  ) {}
 
   async getParts(): Promise<IPart[]> {
     const activeFile = this.workspaceService.getActiveFile();
@@ -50,18 +47,11 @@ export class PartsService implements IPartsService {
         return;
       }
 
-      const textIndex = texts.findIndex((item) =>
-        item.includes(`{${match[1]}|${match[2]}}`),
-      );
+      const textIndex = texts.findIndex((item) => item.includes(`{${match[1]}|${match[2]}}`));
 
-      let rawText = texts[textIndex].replaceAll(
-        `{${match[1]}|${match[2]}}`,
-        match[1],
-      );
+      let rawText = texts[textIndex].replaceAll(`{${match[1]}|${match[2]}}`, match[1]);
 
-      const anotherParts = [
-        ...rawText.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g),
-      ];
+      const anotherParts = [...rawText.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g)];
 
       anotherParts.forEach((item) => {
         rawText = rawText.replace(item[0], item[1]);

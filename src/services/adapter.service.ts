@@ -1,39 +1,24 @@
-import type {
-  DataAdapter,
-  DataWriteOptions,
-  ListedFiles,
-  Stat,
-} from "obsidian";
+import type { DataAdapter, DataWriteOptions, ListedFiles, Stat } from "obsidian";
+import { inject, singleton } from "tsyringe";
 
 export interface IAdapterService {
   exists(normalizedPath: string, sensitive?: boolean): Promise<boolean>;
-  write(
-    normalizedPath: string,
-    data: string,
-    options?: DataWriteOptions,
-  ): Promise<void>;
+  write(normalizedPath: string, data: string, options?: DataWriteOptions): Promise<void>;
   list(normalizedPath: string): Promise<ListedFiles>;
   stat(normalizedPath: string): Promise<Stat | null>;
   read(normalizedPath: string): Promise<string>;
   rmdir(normalizedPath: string, recursive: boolean): Promise<void>;
 }
 
+@singleton()
 export class AdapterService implements IAdapterService {
-  private adapter: DataAdapter;
-
-  constructor(adapter: DataAdapter) {
-    this.adapter = adapter;
-  }
+  constructor(@inject("DataAdapter") private readonly adapter: DataAdapter) {}
 
   async exists(normalizedPath: string, sensitive?: boolean): Promise<boolean> {
     return this.adapter.exists(normalizedPath, sensitive);
   }
 
-  async write(
-    normalizedPath: string,
-    data: string,
-    options?: DataWriteOptions,
-  ): Promise<void> {
+  async write(normalizedPath: string, data: string, options?: DataWriteOptions): Promise<void> {
     await this.adapter.write(normalizedPath, data, options);
   }
 

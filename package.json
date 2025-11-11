@@ -15,7 +15,9 @@
     "test": "jest --forceExit"
   },
   "dependencies": {
-    "pretty-bytes": "^6.1.1"
+    "pretty-bytes": "^6.1.1",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.4",

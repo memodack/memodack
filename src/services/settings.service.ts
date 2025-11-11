@@ -1,9 +1,5 @@
-import {
-  ELanguage,
-  EPlayVariant,
-  EVoiceOverSpeed,
-  type TSettings,
-} from "../types";
+import { singleton } from "tsyringe";
+import { ELanguage, EPlayVariant, EVoiceOverSpeed, type TSettings } from "../types";
 
 export const defaultSettings: TSettings = {
   apiKey: "",
@@ -33,12 +29,9 @@ export interface ISettingsService {
   setSettings(newSettings: Partial<TSettings>): void;
 }
 
+@singleton()
 export class SettingsService implements ISettingsService {
-  private settings: TSettings;
-
-  constructor(initialSettings?: Partial<TSettings>) {
-    this.settings = { ...defaultSettings, ...initialSettings };
-  }
+  private settings: TSettings = { ...defaultSettings };
 
   getApiKey(): string {
     return this.settings.apiKey;
@@ -96,5 +89,3 @@ export class SettingsService implements ISettingsService {
     this.settings.translationDivider = value;
   }
 }
-
-export const settingsService = new SettingsService();

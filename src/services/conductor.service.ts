@@ -1,3 +1,4 @@
+import { inject, singleton } from "tsyringe";
 import { EPlayVariant } from "../types";
 import type { IAudioService } from "./audio.service";
 import type { ISettingsService } from "./settings.service";
@@ -10,14 +11,13 @@ export interface IConductorService {
   play(value: string, translation: string): Promise<void>;
 }
 
+@singleton()
 export class ConductorService implements IConductorService {
-  private settingsService: ISettingsService;
-  private audioService: IAudioService;
-
-  constructor(settingsService: ISettingsService, audioService: IAudioService) {
-    this.settingsService = settingsService;
-    this.audioService = audioService;
-  }
+  constructor(
+    @inject("ISettingsService")
+    private readonly settingsService: ISettingsService,
+    @inject("IAudioService") private readonly audioService: IAudioService,
+  ) {}
 
   async playValue(value: string): Promise<void> {
     await this.audioService.play([
@@ -37,10 +37,7 @@ export class ConductorService implements IConductorService {
     ]);
   }
 
-  async playValueAndTranslation(
-    value: string,
-    translation: string,
-  ): Promise<void> {
+  async playValueAndTranslation(value: string, translation: string): Promise<void> {
     await this.audioService.play([
       {
         source: this.settingsService.getSource(),
@@ -53,10 +50,7 @@ export class ConductorService implements IConductorService {
     ]);
   }
 
-  async playTranslationAndValue(
-    translation: string,
-    value: string,
-  ): Promise<void> {
+  async playTranslationAndValue(translation: string, value: string): Promise<void> {
     await this.audioService.play([
       {
         source: this.settingsService.getTarget(),

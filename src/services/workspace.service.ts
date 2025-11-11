@@ -1,24 +1,20 @@
 import { MarkdownView, type TFile, type Workspace } from "obsidian";
+import { inject, singleton } from "tsyringe";
 
 export interface IWorkspaceService {
   getActiveFile(): TFile | null;
   isReadingMode(): boolean;
 }
 
+@singleton()
 export class WorkspaceService implements IWorkspaceService {
-  private workspace: Workspace;
-
-  constructor(workspace: Workspace) {
-    this.workspace = workspace;
-  }
+  constructor(@inject("Workspace") private readonly workspace: Workspace) {}
 
   getActiveFile(): TFile | null {
     return this.workspace.getActiveFile();
   }
 
   isReadingMode(): boolean {
-    return (
-      this.workspace.getActiveViewOfType(MarkdownView)?.getMode() === "preview"
-    );
+    return this.workspace.getActiveViewOfType(MarkdownView)?.getMode() === "preview";
   }
 }

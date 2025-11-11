@@ -1,22 +1,14 @@
 import { type App, Notice, PluginSettingTab, Setting } from "obsidian";
 import prettyBytes from "pretty-bytes";
-import {
-  ELanguage,
-  EPlayVariant,
-  EVoiceOverSpeed,
-  type TMemodackPlugin,
-} from "../types";
+import { inject, singleton } from "tsyringe";
+import { ELanguage, EPlayVariant, EVoiceOverSpeed, type TMemodackPlugin } from "../types";
 import type { ICacheService } from "./cache.service";
 import type { ISettingsService } from "./settings.service";
 import type { ITranslationService } from "./translation.service";
 import type { ITtsService } from "./tts.service";
 
+@singleton()
 export class SettingTabService extends PluginSettingTab {
-  private readonly plugin: TMemodackPlugin;
-  private readonly cacheService: ICacheService;
-  private readonly translationService: ITranslationService;
-  private readonly ttsService: ITtsService;
-  private readonly settingsService: ISettingsService;
   private cacheSize: number = 0;
 
   private checkSettings!: Setting;
@@ -26,25 +18,23 @@ export class SettingTabService extends PluginSettingTab {
   private playVariantSettings!: Setting;
 
   constructor(
-    app: App,
-    plugin: TMemodackPlugin,
-    cacheService: ICacheService,
-    translationService: ITranslationService,
-    ttsService: ITtsService,
-    settingsService: ISettingsService,
+    @inject("app") app: App,
+    @inject("plugin") private readonly plugin: TMemodackPlugin,
+    @inject("ICacheService") private readonly cacheService: ICacheService,
+    @inject("ITranslationService")
+    private readonly translationService: ITranslationService,
+    @inject("ITtsService") private readonly ttsService: ITtsService,
+    @inject("ISettingsService")
+    private readonly settingsService: ISettingsService,
   ) {
     super(app, plugin);
-
-    this.plugin = plugin;
-    this.cacheService = cacheService;
-    this.translationService = translationService;
-    this.ttsService = ttsService;
-    this.settingsService = settingsService;
 
     this.getCacheSize();
   }
 
   display(): void {
+    this.getCacheSize();
+
     const { containerEl } = this;
 
     containerEl.empty();
@@ -158,12 +148,10 @@ export class SettingTabService extends PluginSettingTab {
       .setName("Divider")
       .setDesc('Split translation values using the ";" symbol.')
       .addToggle((toggle) =>
-        toggle
-          .setValue(this.settingsService.getTranslationDivider())
-          .onChange(async (value) => {
-            this.settingsService.setTranslationDivider(value);
-            await this.plugin.saveSettings();
-          }),
+        toggle.setValue(this.settingsService.getTranslationDivider()).onChange(async (value) => {
+          this.settingsService.setTranslationDivider(value);
+          await this.plugin.saveSettings();
+        }),
       );
 
     new Setting(containerEl).setName("Optimization").setHeading();
@@ -181,9 +169,7 @@ export class SettingTabService extends PluginSettingTab {
           }),
       );
 
-    this.controlApiKeyRequirements(
-      this.settingsService.getApiKey().length >= 39,
-    );
+    this.controlApiKeyRequirements(this.settingsService.getApiKey().length >= 39);
   }
 
   private async check(): Promise<void> {

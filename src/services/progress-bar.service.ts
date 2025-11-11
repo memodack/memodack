@@ -1,3 +1,5 @@
+import { singleton } from "tsyringe";
+
 export interface IProgressBarService {
   create(contentEl: HTMLElement, max: number, value: number): void;
   setMax(max: number): void;
@@ -6,6 +8,7 @@ export interface IProgressBarService {
   getElement(): HTMLProgressElement;
 }
 
+@singleton()
 export class ProgressBarService implements IProgressBarService {
   private _progressElement: HTMLProgressElement | null = null;
 
@@ -41,5 +44,3 @@ export class ProgressBarService implements IProgressBarService {
     return this._progressElement;
   }
 }
-
-export const progressBarService = new ProgressBarService();

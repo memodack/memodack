@@ -1,15 +1,16 @@
+import { inject, singleton } from "tsyringe";
 import type { IConductorService } from "./conductor.service";
 
 export interface IMppService {
   getPostProcessor(element: HTMLElement): void;
 }
 
+@singleton()
 export class MppService implements IMppService {
-  private conductorService: IConductorService;
-
-  constructor(conductorService: IConductorService) {
-    this.conductorService = conductorService;
-  }
+  constructor(
+    @inject("IConductorService")
+    private readonly conductorService: IConductorService,
+  ) {}
 
   getPostProcessor = (element: HTMLElement): void => {
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
@@ -58,9 +59,7 @@ export class MppService implements IMppService {
             },
           });
 
-          span.onClickEvent(() =>
-            this.conductorService.play(value, translation),
-          );
+          span.onClickEvent(() => this.conductorService.play(value, translation));
 
           fragment.appendChild(span);
         } else {

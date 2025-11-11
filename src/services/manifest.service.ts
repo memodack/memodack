@@ -1,16 +1,14 @@
 import type { PluginManifest } from "obsidian";
+import { inject, singleton } from "tsyringe";
 
 export interface IManifestService {
   getId(): string;
   getDir(): string | undefined;
 }
 
+@singleton()
 export class ManifestService implements IManifestService {
-  private manifest: PluginManifest;
-
-  constructor(manifest: PluginManifest) {
-    this.manifest = manifest;
-  }
+  constructor(@inject("PluginManifest") private readonly manifest: PluginManifest) {}
 
   getId(): string {
     return this.manifest.id;

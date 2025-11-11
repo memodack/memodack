@@ -1,5 +1,6 @@
+import { inject, singleton } from "tsyringe";
 import type { IPart } from "./parts.service";
-import { type ISettingsService, settingsService } from "./settings.service";
+import type { ISettingsService } from "./settings.service";
 
 export interface IBlitz {
   correctAnswerId: number;
@@ -16,14 +17,15 @@ export interface IBlitzService {
   getProgress(): number;
 }
 
+@singleton()
 export class BlitzService implements IBlitzService {
   private blitzMap = new Map<number, IBlitz>();
   private progress = 0;
-  private settingsService: ISettingsService;
 
-  constructor(settingsService: ISettingsService) {
-    this.settingsService = settingsService;
-  }
+  constructor(
+    @inject("ISettingsService")
+    private readonly settingsService: ISettingsService,
+  ) {}
 
   create(parts: IPart[]): void {
     this.blitzMap.clear();
@@ -120,15 +122,9 @@ export class BlitzService implements IBlitzService {
     this.progress -= 1;
   }
 
-  private getRandomNumbers(
-    maxNumber: number,
-    ignoreNumber: number,
-    count: number,
-  ): number[] {
+  private getRandomNumbers(maxNumber: number, ignoreNumber: number, count: number): number[] {
     if (maxNumber < 1 || count < 1) {
-      throw new Error(
-        "The maxNumber must be greater than or equal to 1 and count must be greater than or equal to 1.",
-      );
+      throw new Error("The maxNumber must be greater than or equal to 1 and count must be greater than or equal to 1.");
     }
 
     const availableNumbers = new Set<number>();
@@ -139,9 +135,7 @@ export class BlitzService implements IBlitzService {
     }
 
     if (availableNumbers.size < count) {
-      throw new Error(
-        "Not enough unique numbers available to satisfy the count.",
-      );
+      throw new Error("Not enough unique numbers available to satisfy the count.");
     }
 
     const result: number[] = [];
@@ -188,5 +182,3 @@ export class BlitzService implements IBlitzService {
     return parts[index];
   }
 }
-
-export const blitzService = new BlitzService(settingsService);

@@ -1,16 +1,18 @@
+import { inject, singleton } from "tsyringe";
 import type { ISettingsService } from "./settings.service";
 
 export interface IPlayerService {
   play(audioUrl: string): Promise<void>;
 }
 
+@singleton()
 export class PlayerService implements IPlayerService {
   private audio = new Audio();
-  private settingsService: ISettingsService;
 
-  constructor(settingsService: ISettingsService) {
-    this.settingsService = settingsService;
-  }
+  constructor(
+    @inject("ISettingsService")
+    private readonly settingsService: ISettingsService,
+  ) {}
 
   async play(audioUrl: string): Promise<void> {
     if (!audioUrl) {

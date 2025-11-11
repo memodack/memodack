@@ -1,3 +1,4 @@
+import { inject, singleton } from "tsyringe";
 import type { ELanguage } from "../types";
 import type { ICacheService } from "./cache.service";
 import type { IPlayerService } from "./player.service";
@@ -9,20 +10,16 @@ export interface IAudioService {
   play(args: TPlayArgs): Promise<void>;
 }
 
+@singleton()
 export class AudioService implements IAudioService {
-  private ttsService: ITtsService;
-  private cacheService: ICacheService;
-  private playerService: IPlayerService;
-
   constructor(
-    ttsService: ITtsService,
-    cacheService: ICacheService,
-    playerService: IPlayerService,
-  ) {
-    this.ttsService = ttsService;
-    this.cacheService = cacheService;
-    this.playerService = playerService;
-  }
+    @inject("ITtsService")
+    private readonly ttsService: ITtsService,
+    @inject("ICacheService")
+    private readonly cacheService: ICacheService,
+    @inject("IPlayerService")
+    private readonly playerService: IPlayerService,
+  ) {}
 
   async play(args: TPlayArgs): Promise<void> {
     if (!args.length) {
@@ -72,9 +69,7 @@ export class AudioService implements IAudioService {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
 
     // Convert the byte array to a hexadecimal string
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
     return hashHex;
   }

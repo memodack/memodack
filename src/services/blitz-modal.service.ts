@@ -1,5 +1,5 @@
 import { type App, Modal } from "obsidian";
-
+import { inject, singleton } from "tsyringe";
 import type { IBlitzService } from "./blitz.service";
 import type { IConductorService } from "./conductor.service";
 import type { IPart } from "./parts.service";
@@ -7,24 +7,22 @@ import type { IProgressBarService } from "./progress-bar.service";
 
 export interface IBlitzModalService {
   setParts(parts: IPart[]): void;
+  open(): void;
 }
 
+@singleton()
 export class BlitzModalService extends Modal implements IBlitzModalService {
-  private blitzService: IBlitzService;
-  private progressBarService: IProgressBarService;
-  private conductorService: IConductorService;
   private parts: IPart[] = [];
 
   constructor(
-    app: App,
-    blitzService: IBlitzService,
-    progressBarService: IProgressBarService,
-    conductorService: IConductorService,
+    @inject("app") app: App,
+    @inject("IBlitzService") private readonly blitzService: IBlitzService,
+    @inject("IProgressBarService")
+    private readonly progressBarService: IProgressBarService,
+    @inject("IConductorService")
+    private readonly conductorService: IConductorService,
   ) {
     super(app);
-    this.blitzService = blitzService;
-    this.progressBarService = progressBarService;
-    this.conductorService = conductorService;
   }
 
   setParts(parts: IPart[]): void {

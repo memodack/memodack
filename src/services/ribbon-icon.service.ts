@@ -1,10 +1,11 @@
 import { Notice } from "obsidian";
-
-import type { BlitzModalService } from "./blitz-modal.service";
+import { inject, singleton } from "tsyringe";
+import type { IBlitzModalService } from "./blitz-modal.service";
 import type { IPart, IPartsService } from "./parts.service";
 import type { IWorkspaceService } from "./workspace.service";
 
 export interface IRibbonIconService {
+  getIcon(): string;
   getCallback: () => Promise<void>;
 }
 
@@ -14,23 +15,18 @@ const svg = `
 </svg>
 `;
 
+@singleton()
 export class RibbonIconService implements IRibbonIconService {
-  static readonly id = "memodack";
-  static readonly title = "Memodack";
-  static readonly svg = svg;
-
-  private workspaceService: IWorkspaceService;
-  private partsService: IPartsService;
-  private blitzModalService: BlitzModalService;
-
   constructor(
-    workspaceService: IWorkspaceService,
-    partsService: IPartsService,
-    blitzModalService: BlitzModalService,
-  ) {
-    this.workspaceService = workspaceService;
-    this.partsService = partsService;
-    this.blitzModalService = blitzModalService;
+    @inject("IWorkspaceService")
+    private readonly workspaceService: IWorkspaceService,
+    @inject("IPartsService") private readonly partsService: IPartsService,
+    @inject("IBlitzModalService")
+    private readonly blitzModalService: IBlitzModalService,
+  ) {}
+
+  getIcon(): string {
+    return svg;
   }
 
   getCallback = async (): Promise<void> => {

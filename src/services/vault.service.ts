@@ -1,4 +1,5 @@
 import type { TFile, TFolder, Vault } from "obsidian";
+import { inject, singleton } from "tsyringe";
 
 export interface IVaultService {
   read(file: TFile): Promise<string>;
@@ -6,12 +7,9 @@ export interface IVaultService {
   createFolder(path: string): Promise<TFolder>;
 }
 
+@singleton()
 export class VaultService implements IVaultService {
-  private vault: Vault;
-
-  constructor(vault: Vault) {
-    this.vault = vault;
-  }
+  constructor(@inject("Vault") private readonly vault: Vault) {}
 
   async read(file: TFile): Promise<string> {
     return this.vault.read(file);

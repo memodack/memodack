@@ -1,3 +1,4 @@
+import { inject, singleton } from "tsyringe";
 import type { IAdapterService } from "./adapter.service";
 import type { IPathsService } from "./paths.service";
 import type { IVaultService } from "./vault.service";
@@ -9,20 +10,13 @@ export interface ICacheService {
   clear(): Promise<void>;
 }
 
+@singleton()
 export class CacheService implements ICacheService {
-  private pathsService: IPathsService;
-  private vaultService: IVaultService;
-  private adapterService: IAdapterService;
-
   constructor(
-    pathsService: IPathsService,
-    vaultService: IVaultService,
-    adapterService: IAdapterService,
-  ) {
-    this.pathsService = pathsService;
-    this.vaultService = vaultService;
-    this.adapterService = adapterService;
-  }
+    @inject("IPathsService") private readonly pathsService: IPathsService,
+    @inject("IVaultService") private readonly vaultService: IVaultService,
+    @inject("IAdapterService") private readonly adapterService: IAdapterService,
+  ) {}
 
   async add(key: string, value: string): Promise<void> {
     try {
@@ -79,9 +73,7 @@ export class CacheService implements ICacheService {
 
       return totalSize;
     } catch (e) {
-      console.error(
-        `Failed to retrieve the cache directory size. ${e instanceof Error ? e.message : ""}`,
-      );
+      console.error(`Failed to retrieve the cache directory size. ${e instanceof Error ? e.message : ""}`);
 
       return 0;
     }
@@ -97,9 +89,7 @@ export class CacheService implements ICacheService {
 
       await this.adapterService.rmdir(cacheDirPath, true);
     } catch (e) {
-      console.error(
-        `Failed to clear the cache. ${e instanceof Error ? e.message : ""}`,
-      );
+      console.error(`Failed to clear the cache. ${e instanceof Error ? e.message : ""}`);
     }
   }
 }
