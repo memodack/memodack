@@ -1,7 +1,7 @@
 import { type App, Notice, PluginSettingTab, Setting } from "obsidian";
 import prettyBytes from "pretty-bytes";
 import { inject, singleton } from "tsyringe";
-import { ELanguage, EPlayVariant, EVoiceOverSpeed, type TMemodackPlugin } from "../types";
+import { ELanguage, EPlayVariant, ETextTruncate, EVoiceOverSpeed, type TMemodackPlugin } from "../types";
 import type { ICacheService } from "./cache.service";
 import type { ISettingsService } from "./settings.service";
 import type { ITranslationService } from "./translation.service";
@@ -129,7 +129,7 @@ export class SettingTabService extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
-            [EPlayVariant.Nothing]: "Nothing",
+            [EPlayVariant.Disabled]: "Disabled",
             [EPlayVariant.Value]: "Value",
             [EPlayVariant.Translation]: "Translation",
             [EPlayVariant.ValueAndTranslation]: "Value + Translation",
@@ -153,6 +153,23 @@ export class SettingTabService extends PluginSettingTab {
           await this.plugin.saveSettings();
         }),
       );
+
+    new Setting(containerEl)
+      .setName("Truncate")
+      .setDesc("Cut a part of the answer in blitz mode.")
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            [ETextTruncate.Disabled]: "Disabled",
+            [ETextTruncate.Left]: "Left",
+            [ETextTruncate.Right]: "Right",
+          })
+          .setValue(this.settingsService.getTextTruncate())
+          .onChange(async (value): Promise<void> => {
+            this.settingsService.setTextTruncate(value as ETextTruncate);
+            await this.plugin.saveSettings();
+          });
+      });
 
     new Setting(containerEl).setName("Optimization").setHeading();
 

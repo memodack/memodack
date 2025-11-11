@@ -1,5 +1,5 @@
 import { singleton } from "tsyringe";
-import { ELanguage, EPlayVariant, EVoiceOverSpeed, type TSettings } from "../types";
+import { ELanguage, EPlayVariant, ETextTruncate, EVoiceOverSpeed, type TSettings } from "../types";
 
 export const defaultSettings: TSettings = {
   apiKey: "",
@@ -8,6 +8,7 @@ export const defaultSettings: TSettings = {
   playVariant: EPlayVariant.ValueAndTranslation,
   voiceOverSpeed: EVoiceOverSpeed.x2,
   translationDivider: true,
+  textTruncate: ETextTruncate.Right,
 };
 
 export interface ISettingsService {
@@ -17,6 +18,7 @@ export interface ISettingsService {
   getPlayVariant(): EPlayVariant;
   getVoiceOverSpeed(): EVoiceOverSpeed;
   getTranslationDivider(): boolean;
+  getTextTruncate(): ETextTruncate;
 
   setApiKey(value: string): void;
   setSource(value: ELanguage): void;
@@ -24,6 +26,7 @@ export interface ISettingsService {
   setPlayVariant(value: EPlayVariant): void;
   setVoiceOverSpeed(value: EVoiceOverSpeed): void;
   setTranslationDivider(value: boolean): void;
+  setTextTruncate(value: ETextTruncate): void;
 
   getSettings(): TSettings;
   setSettings(newSettings: Partial<TSettings>): void;
@@ -87,5 +90,13 @@ export class SettingsService implements ISettingsService {
 
   setTranslationDivider(value: boolean): void {
     this.settings.translationDivider = value;
+  }
+
+  getTextTruncate(): ETextTruncate {
+    return this.settings.textTruncate;
+  }
+
+  setTextTruncate(value: ETextTruncate): void {
+    this.settings.textTruncate = value;
   }
 }

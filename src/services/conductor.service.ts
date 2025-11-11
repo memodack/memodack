@@ -65,7 +65,7 @@ export class ConductorService implements IConductorService {
 
   async play(value: string, translation: string): Promise<void> {
     switch (this.settingsService.getPlayVariant()) {
-      case EPlayVariant.Nothing:
+      case EPlayVariant.Disabled:
         break;
 
       case EPlayVariant.Value:

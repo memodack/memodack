@@ -16,6 +16,7 @@ import { ProgressBarService } from "./services/progress-bar.service";
 import { type IRibbonIconService, RibbonIconService } from "./services/ribbon-icon.service";
 import { SettingTabService } from "./services/setting-tab.service";
 import { type ISettingsService, SettingsService } from "./services/settings.service";
+import { TextService } from "./services/text.service";
 import { type ITranslateCommandService, TranslateCommandService } from "./services/translate-command.service";
 import { TranslationService } from "./services/translation.service";
 import { TtsService } from "./services/tts.service";
@@ -73,6 +74,7 @@ export class Register implements IRegister {
       ["IBlitzService", BlitzService],
       ["IRibbonIconService", RibbonIconService],
       ["IAdapterService", AdapterService],
+      ["ITextService", TextService],
     ];
 
     services.forEach(([token, value]) => {

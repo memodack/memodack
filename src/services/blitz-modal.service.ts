@@ -1,9 +1,12 @@
 import { type App, Modal } from "obsidian";
 import { inject, singleton } from "tsyringe";
+import { ETextTruncate } from "../types";
 import type { IBlitzService } from "./blitz.service";
 import type { IConductorService } from "./conductor.service";
 import type { IPart } from "./parts.service";
 import type { IProgressBarService } from "./progress-bar.service";
+import type { ISettingsService } from "./settings.service";
+import type { ITextService } from "./text.service";
 
 export interface IBlitzModalService {
   setParts(parts: IPart[]): void;
@@ -21,6 +24,8 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     private readonly progressBarService: IProgressBarService,
     @inject("IConductorService")
     private readonly conductorService: IConductorService,
+    @inject("ITextService") private readonly textService: ITextService,
+    @inject("ISettingsService") private readonly settingsService: ISettingsService,
   ) {
     super(app);
   }
@@ -80,7 +85,30 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
       answersButtons.push(answerButtonElement);
 
-      answerButtonElement.setText(item);
+      /**
+       * Text truncate
+       */
+      const textTruncatePosition = this.settingsService.getTextTruncate();
+
+      let answerText = item;
+
+      if (textTruncatePosition === ETextTruncate.Disabled) {
+        answerButtonElement.setText(answerText);
+      } else {
+        const dividerSymbol = ";";
+
+        if (answerText.search(dividerSymbol)) {
+          answerText = answerText
+            .split(dividerSymbol)
+            .map((t) => this.textService.truncate(t, textTruncatePosition))
+            .join(`${dividerSymbol} `);
+          answerButtonElement.setText(answerText);
+        } else {
+          answerText = this.textService.truncate(answerText, textTruncatePosition);
+          answerButtonElement.setText(answerText);
+        }
+      }
+
       answerButtonElement.addEventListener("click", () => {
         answersButtons.forEach((item) => {
           item.disabled = true;

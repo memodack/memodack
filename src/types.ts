@@ -3,7 +3,7 @@ import type { Plugin } from "obsidian";
 export type TMemodackPlugin = Plugin & { saveSettings: () => Promise<void> };
 
 export enum EPlayVariant {
-  Nothing = "nothing",
+  Disabled = "disabled",
   Value = "value",
   Translation = "translation",
   ValueAndTranslation = "value-and-translation",
@@ -39,4 +39,11 @@ export type TSettings = {
   playVariant: EPlayVariant;
   voiceOverSpeed: EVoiceOverSpeed;
   translationDivider: boolean;
+  textTruncate: ETextTruncate;
 };
+
+export enum ETextTruncate {
+  Disabled = "disabled",
+  Left = "left",
+  Right = "right",
+}
