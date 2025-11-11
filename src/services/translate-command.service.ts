@@ -5,16 +5,11 @@ import type { ISettingsService } from "./settings.service";
 import type { ITranslationService } from "./translation.service";
 
 export interface ITranslateCommandService {
-  getId(): string;
-  getName(): string;
   getCallback: () => Promise<void>;
 }
 
 @singleton()
 export class TranslateCommandService implements ITranslateCommandService {
-  private id: string = "translate";
-  private name: string = "Translate";
-
   constructor(
     @inject("IEditorService") private readonly editorService: IEditorService,
     @inject("ITranslationService")
@@ -24,14 +19,6 @@ export class TranslateCommandService implements ITranslateCommandService {
     @inject("IConductorService")
     private readonly conductorService: IConductorService,
   ) {}
-
-  getId(): string {
-    return this.id;
-  }
-
-  getName(): string {
-    return this.name;
-  }
 
   getCallback = async (): Promise<void> => {
     const selection = this.editorService.getSelection();

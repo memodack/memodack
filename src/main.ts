@@ -33,8 +33,8 @@ export default class MemodackPlugin extends Plugin {
     this.addSettingTab(getSettingTabService());
 
     this.addCommand({
-      id: getTranslateCommandService().getId(),
-      name: getTranslateCommandService().getName(),
+      id: "translate",
+      name: "Translate",
       editorCallback: (editor) => {
         registerEditor(editor);
         return getTranslateCommandService().getCallback();
