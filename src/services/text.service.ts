@@ -14,14 +14,19 @@ export class TextService implements ITextService {
     }
 
     const length = text.length;
-    const deviation = Math.random() * 0.2 - 0.1;
-    const cutRatio = 0.5 + deviation;
-    const cutLength = Math.floor(length * cutRatio);
+
+    // if the word has 3 or fewer characters, return it unchanged
+    if (length <= 3) {
+      return text;
+    }
+
+    // always keep exactly 3 characters
+    const keepLength = 3;
 
     if (position === "left") {
-      return `...${text.slice(length - cutLength)}`;
+      return `...${text.slice(length - keepLength)}`;
     } else {
-      return `${text.slice(0, cutLength)}...`;
+      return `${text.slice(0, keepLength)}...`;
     }
   }
 }

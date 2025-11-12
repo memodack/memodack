@@ -12,7 +12,7 @@
     "lint": "biome lint",
     "lint:circulars": "madge --circular --extensions ts ./",
     "lint:write": "biome lint --write",
-    "test": "jest --forceExit"
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "pretty-bytes": "^6.1.1",

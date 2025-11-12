@@ -97,14 +97,18 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
       } else {
         const dividerSymbol = ";";
 
-        if (answerText.search(dividerSymbol)) {
+        if (answerText.includes(dividerSymbol)) {
           answerText = answerText
             .split(dividerSymbol)
             .map((t) => this.textService.truncate(t, textTruncatePosition))
             .join(`${dividerSymbol} `);
           answerButtonElement.setText(answerText);
         } else {
-          answerText = this.textService.truncate(answerText, textTruncatePosition);
+          answerText = answerText
+            .split(" ")
+            .map((t) => this.textService.truncate(t, textTruncatePosition))
+            .join(" ");
+
           answerButtonElement.setText(answerText);
         }
       }
