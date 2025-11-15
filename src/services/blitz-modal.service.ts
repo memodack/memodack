@@ -62,7 +62,7 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
 
     this.createQuestionElement(blitz.question);
 
-    if (blitz.question !== blitz.text) {
+    if (blitz.question !== blitz.text && blitz.text) {
       this.createTextElement(blitz.text);
     }
 

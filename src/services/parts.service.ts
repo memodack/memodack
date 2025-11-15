@@ -5,7 +5,7 @@ import type { IWorkspaceService } from "./workspace.service";
 export interface IPart {
   value: string;
   translation: string;
-  text: string;
+  text?: string;
 }
 
 export interface IPartsService {
@@ -89,9 +89,6 @@ export class PartsService implements IPartsService {
 
         // Check if the selection intersects with the <span> element
         if (ranges.intersectsNode(span)) {
-          const beforeText = span.previousSibling?.textContent?.trim() || "";
-          const afterText = span.nextSibling?.textContent?.trim() || "";
-
           const value = span.textContent;
 
           if (!value) {
@@ -100,11 +97,9 @@ export class PartsService implements IPartsService {
 
           const translation = span.getAttribute("data-translation");
 
-          const text = `${beforeText} ${value} ${afterText}`.trim();
-
           // Format the string and add it to the array
           if (value && translation) {
-            parts.push({ value, translation, text });
+            parts.push({ value, translation });
           }
         }
       });

@@ -1,8 +1,8 @@
-import { TextService } from "../src/services/text.service";
+import { type ITextService, TextService } from "../src/services/text.service";
 
 describe("TextService", () => {
   describe("truncate", () => {
-    let service: TextService;
+    let service: ITextService;
 
     beforeEach(() => {
       service = new TextService();
