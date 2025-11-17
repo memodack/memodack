@@ -32,8 +32,15 @@ export enum ELanguage {
   Japanese = "ja",
 }
 
+export enum EProvider {
+  Google = "google",
+  Custom = "custom",
+}
+
 export type TSettings = {
+  provider: EProvider;
   apiKey: string;
+  apiUrl: string;
   source: ELanguage;
   target: ELanguage;
   playVariant: EPlayVariant;
@@ -46,4 +53,12 @@ export enum ETextTruncate {
   Disabled = "disabled",
   Left = "left",
   Right = "right",
+}
+
+export interface ITranslationService {
+  translate(source: ELanguage, target: ELanguage, text: string): Promise<string | null>;
+}
+
+export interface ITtsService {
+  tts(language: ELanguage, value: string): Promise<string | null>;
 }

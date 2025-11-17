@@ -6,7 +6,11 @@ import { BlitzService } from "./services/blitz.service";
 import { BlitzModalService } from "./services/blitz-modal.service";
 import { CacheService } from "./services/cache.service";
 import { ConductorService } from "./services/conductor.service";
+import { CustomTranslationService } from "./services/custom-translation.service";
+import { CustomTtsService } from "./services/custom-tts.service";
 import { EditorService } from "./services/editor.service";
+import { GoogleTranslationService } from "./services/google-translation.service";
+import { GoogleTtsService } from "./services/google-tts.service";
 import { ManifestService } from "./services/manifest.service";
 import { type IMppService, MppService } from "./services/mpp.service";
 import { PartsService } from "./services/parts.service";
@@ -16,6 +20,7 @@ import { ProgressBarService } from "./services/progress-bar.service";
 import { type IRibbonIconService, RibbonIconService } from "./services/ribbon-icon.service";
 import { SettingTabService } from "./services/setting-tab.service";
 import { type ISettingsService, SettingsService } from "./services/settings.service";
+import { TesterService } from "./services/tester.service";
 import { TextService } from "./services/text.service";
 import { type ITranslateCommandService, TranslateCommandService } from "./services/translate-command.service";
 import { TranslationService } from "./services/translation.service";
@@ -75,6 +80,12 @@ export class Register implements IRegister {
       ["IRibbonIconService", RibbonIconService],
       ["IAdapterService", AdapterService],
       ["ITextService", TextService],
+      ["ITextService", TextService],
+      ["GoogleTranslationService", GoogleTranslationService],
+      ["CustomTranslationService", CustomTranslationService],
+      ["GoogleTtsService", GoogleTtsService],
+      ["CustomTtsService", CustomTtsService],
+      ["ITesterService", TesterService],
     ];
 
     services.forEach(([token, value]) => {

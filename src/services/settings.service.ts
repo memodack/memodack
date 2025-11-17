@@ -1,8 +1,10 @@
 import { singleton } from "tsyringe";
-import { ELanguage, EPlayVariant, ETextTruncate, EVoiceOverSpeed, type TSettings } from "../types";
+import { ELanguage, EPlayVariant, EProvider, ETextTruncate, EVoiceOverSpeed, type TSettings } from "../types";
 
 export const defaultSettings: TSettings = {
+  provider: EProvider.Google,
   apiKey: "",
+  apiUrl: "http://localhost:8000",
   source: ELanguage.English,
   target: ELanguage.Ukrainian,
   playVariant: EPlayVariant.ValueAndTranslation,
@@ -12,7 +14,9 @@ export const defaultSettings: TSettings = {
 };
 
 export interface ISettingsService {
+  getProvider(): EProvider;
   getApiKey(): string;
+  getApiUrl(): string;
   getSource(): ELanguage;
   getTarget(): ELanguage;
   getPlayVariant(): EPlayVariant;
@@ -20,7 +24,9 @@ export interface ISettingsService {
   getTranslationDivider(): boolean;
   getTextTruncate(): ETextTruncate;
 
+  setProvider(value: EProvider): void;
   setApiKey(value: string): void;
+  setApiUrl(value: string): void;
   setSource(value: ELanguage): void;
   setTarget(value: ELanguage): void;
   setPlayVariant(value: EPlayVariant): void;
@@ -36,12 +42,28 @@ export interface ISettingsService {
 export class SettingsService implements ISettingsService {
   private settings: TSettings = { ...defaultSettings };
 
+  getProvider(): EProvider {
+    return this.settings.provider;
+  }
+
+  setProvider(value: EProvider): void {
+    this.settings.provider = value;
+  }
+
   getApiKey(): string {
     return this.settings.apiKey;
   }
 
   setApiKey(value: string): void {
     this.settings.apiKey = value;
+  }
+
+  getApiUrl(): string {
+    return this.settings.apiUrl;
+  }
+
+  setApiUrl(value: string): void {
+    this.settings.apiUrl = value;
   }
 
   getSource(): ELanguage {

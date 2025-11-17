@@ -1,16 +1,17 @@
 import { type App, Notice, PluginSettingTab, Setting } from "obsidian";
 import prettyBytes from "pretty-bytes";
 import { inject, singleton } from "tsyringe";
-import { ELanguage, EPlayVariant, ETextTruncate, EVoiceOverSpeed, type TMemodackPlugin } from "../types";
+import { ELanguage, EPlayVariant, EProvider, ETextTruncate, EVoiceOverSpeed, type TMemodackPlugin } from "../types";
 import type { ICacheService } from "./cache.service";
 import type { ISettingsService } from "./settings.service";
-import type { ITranslationService } from "./translation.service";
-import type { ITtsService } from "./tts.service";
+import type { ITesterService } from "./tester.service";
 
 @singleton()
 export class SettingTabService extends PluginSettingTab {
   private cacheSize: number = 0;
 
+  private apiKeySettings!: Setting;
+  private apiUrlSettings!: Setting;
   private checkSettings!: Setting;
   private nativeLanguageSettings!: Setting;
   private documentLanguageSettings!: Setting;
@@ -21,9 +22,7 @@ export class SettingTabService extends PluginSettingTab {
     @inject("app") app: App,
     @inject("plugin") private readonly plugin: TMemodackPlugin,
     @inject("ICacheService") private readonly cacheService: ICacheService,
-    @inject("ITranslationService")
-    private readonly translationService: ITranslationService,
-    @inject("ITtsService") private readonly ttsService: ITtsService,
+    @inject("ITesterService") private readonly testerService: ITesterService,
     @inject("ISettingsService")
     private readonly settingsService: ISettingsService,
   ) {
@@ -39,21 +38,53 @@ export class SettingTabService extends PluginSettingTab {
 
     containerEl.empty();
 
-    new Setting(containerEl).setName("Provider (Google)").setHeading();
+    new Setting(containerEl).setName("General").setHeading();
 
     new Setting(containerEl)
+      .setName("Provider")
+      .setDesc("Select the service provider to use.")
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            [EProvider.Google]: "Google",
+            [EProvider.Custom]: "Custom",
+          })
+          .setValue(this.settingsService.getProvider())
+          .onChange(async (value): Promise<void> => {
+            this.settingsService.setProvider(value as EProvider);
+            await this.plugin.saveSettings();
+
+            this.controlProviderRequirements(value as EProvider);
+
+            this.checkProviderApiAccess(value as EProvider);
+          });
+      });
+
+    this.apiKeySettings = new Setting(containerEl)
       .setName("API Key")
       .setDesc("API key for translation and text-to-speech services.")
       .addText((text) => {
         text
           .setValue(this.settingsService.getApiKey())
           .onChange(async (value) => {
-            this.controlApiKeyRequirements(value.length >= 39);
-
             this.settingsService.setApiKey(value);
             await this.plugin.saveSettings();
+
+            this.controlApiAccessRequirements(this.apiKeyCondition(value));
           })
           .inputEl.setAttribute("type", "password");
+      });
+
+    this.apiUrlSettings = new Setting(containerEl)
+      .setName("API URL")
+      .setDesc("A custom API URL for your own server.")
+      .addText((text) => {
+        text.setValue(this.settingsService.getApiUrl()).onChange(async (value) => {
+          this.settingsService.setApiUrl(value);
+          await this.plugin.saveSettings();
+
+          this.controlApiAccessRequirements(this.apiUrlCondition(value));
+        });
       });
 
     this.checkSettings = new Setting(containerEl)
@@ -186,19 +217,33 @@ export class SettingTabService extends PluginSettingTab {
           }),
       );
 
-    this.controlApiKeyRequirements(this.settingsService.getApiKey().length >= 39);
+    const provider = this.settingsService.getProvider();
+    this.checkProviderApiAccess(provider);
+
+    this.controlProviderRequirements(this.settingsService.getProvider());
   }
 
   private async check(): Promise<void> {
-    const apiKey = this.settingsService.getApiKey();
+    const provider = this.settingsService.getProvider();
 
-    if (!apiKey) {
-      new Notice("No API key entered.");
-      return;
+    if (provider === EProvider.Google) {
+      const apiKey = this.settingsService.getApiKey();
+
+      if (!apiKey?.length) {
+        new Notice("No API key provided.");
+        return;
+      }
+    } else {
+      const apiUrl = this.settingsService.getApiUrl();
+
+      if (!apiUrl?.length) {
+        new Notice("No API URL provided.");
+        return;
+      }
     }
 
-    await this.translationService.test();
-    await this.ttsService.test();
+    await this.testerService.testTranslationService();
+    await this.testerService.testTtsService();
   }
 
   private getCacheSize(): void {
@@ -212,7 +257,19 @@ export class SettingTabService extends PluginSettingTab {
       });
   }
 
-  private controlApiKeyRequirements(value: boolean): void {
+  private controlProviderRequirements(provider: EProvider): void {
+    if (provider === EProvider.Google) {
+      this.apiKeySettings.settingEl.style.display = "";
+      this.apiUrlSettings.settingEl.style.display = "none";
+
+      return;
+    }
+
+    this.apiKeySettings.settingEl.style.display = "none";
+    this.apiUrlSettings.settingEl.style.display = "";
+  }
+
+  private controlApiAccessRequirements(value: boolean): void {
     [
       this.checkSettings,
       this.nativeLanguageSettings,
@@ -222,5 +279,24 @@ export class SettingTabService extends PluginSettingTab {
     ].forEach((item) => {
       item.setDisabled(!value);
     });
+  }
+
+  private checkProviderApiAccess(provider: EProvider): void {
+    if (provider === EProvider.Google) {
+      const apiKey = this.settingsService.getApiKey();
+      this.controlApiAccessRequirements(this.apiKeyCondition(apiKey));
+      return;
+    } else {
+      const apiUrl = this.settingsService.getApiUrl();
+      this.controlApiAccessRequirements(this.apiUrlCondition(apiUrl));
+    }
+  }
+
+  private apiKeyCondition(value: string): boolean {
+    return value.length >= 39;
+  }
+
+  private apiUrlCondition(value: string): boolean {
+    return value.length >= 7;
   }
 }
