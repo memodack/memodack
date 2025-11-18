@@ -1,4 +1,5 @@
-I’ll {explain|пояснити} everything later, I promise.
-The best things in life are {free|безкоштовно}.
-The {police|поліція} have questioned him about the incident.
-They’ve taken their {relationship|відносини; стосунки} to the next level.
+# Example
+
+The {best|найкращі} {things|речі} in {life|житті} are {free|безкоштовні}.
+
+[life](https://cdn.pixabay.com/photo/2023/03/19/19/38/mountain-7863224_960_720.jpg)

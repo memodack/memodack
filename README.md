@@ -1,56 +1,149 @@
 # Memodack
 
-### Description
+Forget expensive apps like [Quizlet](https://quizlet.com/), [Readlang](https://readlang.com/), and others. [Memodack](https://github.com/memodack/memodack) is a simpler, free alternative built just for memorizing language parts. Learn anytime, anywhere — offline, on mobile or desktop.
 
-We all know paid services like [Quizlet](https://quizlet.com/), [Readlang](https://readlang.com/), or free ones like [Anki](https://apps.ankiweb.net/). Memodack offers something similar, but much simpler and focused exclusively on memorizing language parts. Study whenever it suits you — **without limits**, **offline**, on **mobile** or **desktop**.
+![preview](docs/preview.png)
 
-![alt text](docs/desktop.png)
+## Content
 
-### Installation
+- [Installation](#installation)
+- [Hotkeys](#hotkeys)
+- [Syntax](#syntax)
+- [Practice](#practice)
+- [Settings](#settings)
+  - [General](#general)
+    - [Provider](#provider)
+      - [Google](#google)
+        - [Api Key](#api-key)
+      - [Custom](#custom)
+        - [Api URL](#api-url)
+    - [Connection](#connection)
+  - [Language](#language)
+    - [Native](#native)
+    - [Document](#document)
+  - [Voiceover](#voiceover)
+    - [Playback](#playback)
+  - [Actions](#actions)
+    - [Pressing](#pressing)
+  - [Extra](#extra)
+    - [Divider](#divider)
+    - [Truncate](#truncate)
+  - [Optimization](#optimization)
+    - [Cache](#cache)
+
+## Installation
 
 1. Launch Obsidian.
 2. Navigate to `Settings` > `Community Plugins`.
 3. Search for `Memodack`.
 4. Install and enable the plugin.
 
-### Settings
+## Hotkeys
 
-The plugin uses an API for text translation and text-to-speech (TTS). Currently, the provider is Google. To obtain an API key, you need to enable access to two services: [Cloud Translation API](https://console.cloud.google.com/marketplace/product/google/translate.googleapis.com) and [Cloud Text-to-Speech API](https://console.cloud.google.com/marketplace/product/google/texttospeech.googleapis.com). After that, you can create an API key in the [Credentials](https://console.cloud.google.com/apis/credentials) section.
+For quick translation and conversion into the plugin’s syntax, set up hotkeys for the `Memodack: Translate` command. For example, you can assign `Alt` + `T`. After that, select a word or several words and activate the shortcut.
 
-**You can use the plugin without connecting to Google services, but in that case, text-to-speech and translation won't work — however, Blitz mode will!**
+## Syntax
 
-![alt text](docs/settings.png)
-
-### Syntax
-
-The plugin has its own syntax. In the documentation, we will use the word «part» or «parts» to refer to a word or phrase (or words and phrases).
+The plugin uses its own syntax:
 
 `{value|translation}`
 
-On the left, there can be a value, and on the right, the translation. If there is more than one translation, they can be listed separated by commas.
+If you want to provide multiple translations, separate them with a semicolon `;`:
 
-`{some value|translation, translation, translation, ...}`
+`{value|translation; translation; translation}`
 
-All translations will be considered as one.
+If you want to attach an image to a word, simply create a link to the image directly in the document, as shown in the [Example](https://github.com/memodack/memodack/blob/main/docs/example.md). This can be either a file stored in [Obsidian](https://obsidian.md/) itself or a link to an external resource.
 
-In reading mode, the translation will be hidden, and the part will be highlighted with specific styles.
+The link name must be exactly the same as the word:
 
-### Hotkeys
+`[<value>](...)`
 
-In the settings hotkeys, find the command `Memodack: Translate` and set a hotkey, for example, `Alt+T`.
+## Practice
 
-For a quick translation and to convert a part to plugin syntax, select what you need and press `Alt+T`. After translation, text-to-speech (TTS) will be called for the value and its translation.
+To activate **Blitz** mode, click the lightning icon in the left ribbon menu.
 
-`car` -> `{car|автомобіль}`
+You can also select at least **4** words and then press the lightning icon to work exclusively with those words.
 
-### Practice
+## Settings
 
-For practice, open a document in reading mode and click the flash icon in the left ribbon menu, or search for `Memodack` in the command palette.
+Open the plugin settings.
 
-If you don't want to practice all the parts in the document, just select what you need and click the flash icon. If a part is not fully highlighted, it will still be selected.
+### General
 
-### Cache
+General settings are essential for translation and voiceover to function properly.
 
-After text-to-speech (TTS), the result will be saved to the cache at the path below and will be used for the next audio playback.
+#### Provider
 
-`.obsidian/plugins/memodack/cache`
+Providers supply translation and text-to-speech services.
+
+##### Google
+
+To use Google services, you need to register on **GCP** and enable the following APIs:
+
+- [Cloud Translation API](https://console.cloud.google.com/marketplace/product/google/translate.googleapis.com)  
+- [Cloud Text-to-Speech API](https://console.cloud.google.com/marketplace/product/google/texttospeech.googleapis.com)
+
+###### Api Key
+
+After registering in GCP, create an API Key in the [Credentials](https://console.cloud.google.com/apis/credentials) section.  
+Paste it into the corresponding field in the plugin settings.
+
+##### Custom
+
+To connect your own **free** service, run [Translator](https://github.com/memodack/translator).
+
+###### Api URL
+
+Once [Translator](https://github.com/memodack/translator) is running, copy its address and paste it into the appropriate field in the plugin settings (if it is not already there).
+
+#### Connection
+
+After configuring the connection, press the **Check** button to test it. Notification messages will inform you of the connection status.
+
+### Language
+
+Configure the languages you want to work with.
+
+#### Native
+
+Select the language you understand.
+
+#### Document
+
+Choose the language of the document.
+
+### Voiceover
+
+Sound settings.
+
+#### Playback
+
+Adjust the playback speed here.
+
+### Actions
+
+Actions related to parts of speech.
+
+#### Pressing
+
+When clicking on a part of speech, you can enable voiceover.
+
+### Extra
+
+Additional options.
+
+#### Divider
+
+Translations may include multiple variants separated by `;`.  When this option is enabled, only one translation will be randomly selected.
+
+#### Truncate
+
+Trim part of the translation output.
+
+### Optimization
+
+All voiceovers are cached.
+
+#### Cache
+
+You can clear the cache by pressing the **Clear** button.

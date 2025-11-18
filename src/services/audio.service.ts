@@ -1,8 +1,7 @@
 import { inject, singleton } from "tsyringe";
-import type { ELanguage } from "../types";
+import type { ELanguage, ITtsService } from "../types";
 import type { ICacheService } from "./cache.service";
 import type { IPlayerService } from "./player.service";
-import type { ITtsService } from "./tts.service";
 
 type TPlayArgs = { source: ELanguage; value: string }[];
 
