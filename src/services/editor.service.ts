@@ -1,12 +1,12 @@
 import type { Editor } from "obsidian";
-import { inject, singleton } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
 export interface IEditorService {
   getSelection(): string;
   replaceSelection(replacement: string, origin?: string): void;
 }
 
-@singleton()
+@injectable()
 export class EditorService implements IEditorService {
   constructor(@inject("Editor") private readonly editor: Editor) {}
 

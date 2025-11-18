@@ -59,7 +59,6 @@ export class Register implements IRegister {
   registerServices(): void {
     const services: Array<[string, any]> = [
       ["ISettingsService", SettingsService],
-      ["IEditorService", EditorService],
       ["IManifestService", ManifestService],
       ["IVaultService", VaultService],
       ["IWorkspaceService", WorkspaceService],
@@ -68,7 +67,6 @@ export class Register implements IRegister {
       ["IConductorService", ConductorService],
       ["IMppService", MppService],
       ["ITranslationService", TranslationService],
-      ["ITranslateCommandService", TranslateCommandService],
       ["IPartsService", PartsService],
       ["IPlayerService", PlayerService],
       ["IAudioService", AudioService],
@@ -91,6 +89,9 @@ export class Register implements IRegister {
     services.forEach(([token, value]) => {
       container.registerSingleton(token, value);
     });
+
+    container.register("ITranslateCommandService", TranslateCommandService);
+    container.register("IEditorService", EditorService);
   }
 
   registerEditor(editor: Editor): void {

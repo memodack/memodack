@@ -1,14 +1,14 @@
-import { inject, singleton } from "tsyringe";
+import { inject, injectable } from "tsyringe";
+import type { ITranslationService } from "../types";
 import type { IConductorService } from "./conductor.service";
 import type { IEditorService } from "./editor.service";
 import type { ISettingsService } from "./settings.service";
-import type { ITranslationService } from "./translation.service";
 
 export interface ITranslateCommandService {
   getCallback: () => Promise<void>;
 }
 
-@singleton()
+@injectable()
 export class TranslateCommandService implements ITranslateCommandService {
   constructor(
     @inject("IEditorService") private readonly editorService: IEditorService,
