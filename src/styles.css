@@ -103,3 +103,19 @@
     background-color: #d5210f38;
   }
 }
+
+body.theme-dark .memodack___syntax {
+  text-decoration-color: #6f6f6f;
+  background-color: #2d2d2d;
+}
+
+body.theme-dark .memodack___blitz__answers .correct {
+  color: #23b96a;
+  background-color: #294138;
+}
+
+body.theme-dark .memodack___blitz__answers .wrong {
+  border: solid 1px #c52222;
+  color: #df3e3e;
+  background-color: #d5210f38;
+}
