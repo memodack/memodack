@@ -1,3 +1,4 @@
+import { TFile } from "obsidian";
 import { inject, singleton } from "tsyringe";
 import type { IVaultService } from "./vault.service";
 import type { IWorkspaceService } from "./workspace.service";
@@ -6,11 +7,17 @@ export interface IPart {
   value: string;
   translation: string;
   text?: string;
+  imageUrl?: string;
 }
 
 export interface IPartsService {
   getParts(): Promise<IPart[]>;
-  getSelectedParts(): IPart[];
+  getSelectedParts(): Promise<IPart[]>;
+}
+
+interface IExternalLink {
+  title: string;
+  url: string;
 }
 
 @singleton()
@@ -57,22 +64,35 @@ export class PartsService implements IPartsService {
         rawText = rawText.replace(item[0], item[1]);
       });
 
-      parts.push({
+      const data: IPart = {
         value: match[1],
         translation: match[2],
         text: rawText,
-      });
+      };
+
+      /**
+       * Image
+       */
+      const imageUrl = this.findAnImageUrl(content, match[1]);
+
+      if (imageUrl) {
+        data.imageUrl = imageUrl;
+      }
+
+      parts.push(data);
     });
 
     return parts;
   }
 
-  getSelectedParts(): IPart[] {
+  async getSelectedParts(): Promise<IPart[]> {
     const activeFile = this.workspaceService.getActiveFile();
 
     if (!activeFile) {
       return [];
     }
+
+    const content = await this.vaultService.read(activeFile);
 
     const parts: IPart[] = [];
 
@@ -99,7 +119,18 @@ export class PartsService implements IPartsService {
 
           // Format the string and add it to the array
           if (value && translation) {
-            parts.push({ value, translation });
+            const data: IPart = { value, translation };
+
+            /**
+             * Image
+             */
+            const imageUrl = this.findAnImageUrl(content, value);
+
+            if (imageUrl) {
+              data.imageUrl = imageUrl;
+            }
+
+            parts.push(data);
           }
         }
       });
@@ -111,5 +142,42 @@ export class PartsService implements IPartsService {
     }
 
     return [];
+  }
+
+  private findAnImageUrl(content: string, search: string): string | null {
+    const filteredImages = this.extractExternalLinks(content).map((item) => ({
+      title: item.title,
+      url: this.getResourcePath(item.url),
+    }));
+
+    const image = filteredImages.find((item) => item.title === search);
+
+    if (!image) {
+      return null;
+    }
+
+    return image.url;
+  }
+
+  private extractExternalLinks(content: string): IExternalLink[] {
+    // [text](url)
+    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+    return [...content.matchAll(regex)].map((m) => ({
+      title: m[1],
+      url: m[2],
+    }));
+  }
+
+  private getResourcePath(path: string) {
+    let url = path;
+
+    const file = this.vaultService.getAbstractFileByPath(url);
+
+    if (file instanceof TFile) {
+      url = this.vaultService.getResourcePath(file);
+    }
+
+    return url;
   }
 }

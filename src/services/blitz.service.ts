@@ -6,7 +6,8 @@ export interface IBlitz {
   correctAnswerId: number;
   question: string;
   answers: string[];
-  text: string;
+  text?: string;
+  imageUrl?: string;
 }
 
 export interface IBlitzService {
@@ -63,6 +64,7 @@ export class BlitzService implements IBlitzService {
         question: shufflePartItem.value,
         answers: shuffleAnswers,
         text: shufflePartItem.text,
+        imageUrl: shufflePartItem?.imageUrl,
       });
     });
   }

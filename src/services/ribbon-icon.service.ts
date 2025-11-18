@@ -39,7 +39,7 @@ export class RibbonIconService implements IRibbonIconService {
 
     let parts: IPart[] = [];
 
-    parts = this.partsService.getSelectedParts();
+    parts = await this.partsService.getSelectedParts();
 
     if (!parts.length) {
       parts = await this.partsService.getParts();

@@ -60,6 +60,18 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     const { contentEl } = this;
     contentEl.empty();
 
+    /**
+     * Image
+     */
+    const imageUrl = blitz?.imageUrl;
+
+    if (imageUrl) {
+      this.createImageElement(imageUrl);
+    }
+
+    /**
+     * Question
+     */
     this.createQuestionElement(blitz.question);
 
     if (blitz.question !== blitz.text && blitz.text) {
@@ -71,6 +83,9 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     let nextButtonEl: HTMLButtonElement | undefined;
     let correctOptionEl: HTMLButtonElement | undefined;
 
+    /**
+     * Answers
+     */
     const answersButtons: HTMLButtonElement[] = [];
 
     const answersElement = contentEl.createEl("div");
@@ -169,5 +184,12 @@ export class BlitzModalService extends Modal implements IBlitzModalService {
     const questionH2Element = contentEl.createEl("div");
     questionH2Element.setText(text);
     questionH2Element.addClass("memodack___blitz__text");
+  }
+
+  private createImageElement(src: string) {
+    const { contentEl } = this;
+    const img = contentEl.createEl("img");
+    img.setAttr("src", src);
+    img.addClass("memodack___blitz__image");
   }
 }
