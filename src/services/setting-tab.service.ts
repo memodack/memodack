@@ -136,7 +136,7 @@ export class SettingTabService extends PluginSettingTab {
     new Setting(containerEl).setName("Voiceover").setHeading();
 
     this.playbackSpeedSettings = new Setting(containerEl)
-      .setName("Playback speed")
+      .setName("Playback")
       .setDesc("The speed at which the voiceover will be performed.")
       .addDropdown((dropdown) => {
         dropdown
@@ -155,7 +155,7 @@ export class SettingTabService extends PluginSettingTab {
     new Setting(containerEl).setName("Actions").setHeading();
 
     this.playVariantSettings = new Setting(containerEl)
-      .setName("When pressed play")
+      .setName("Pressing")
       .setDesc("Will be voiced when you click on a part.")
       .addDropdown((dropdown) => {
         dropdown
