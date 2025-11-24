@@ -187,7 +187,7 @@ export class SettingTabService extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Truncate")
-      .setDesc("Cut a part of the answer in blitz mode.")
+      .setDesc("Cut a part of the answer in practice mode.")
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({

@@ -60,7 +60,7 @@ The link name must be exactly the same as the word:
 
 ## Practice
 
-To activate **Blitz** mode, click the lightning icon in the left ribbon menu.
+To activate **Practice** mode, click the lightning icon in the left ribbon menu.
 
 You can also select at least **4** words and then press the lightning icon to work exclusively with those words.
 

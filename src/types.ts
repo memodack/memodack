@@ -62,3 +62,18 @@ export interface ITranslationService {
 export interface ITtsService {
   tts(language: ELanguage, value: string): Promise<string | null>;
 }
+
+export interface IWord {
+  value: string;
+  translation: string;
+  text: string | null;
+  imageUrl: string | null;
+}
+
+export interface IQuest {
+  imageUrl: string | null;
+  question: string;
+  helpText: string | null;
+  answers: string[];
+  correctAnswerId: number;
+}

@@ -1,4 +1,4 @@
-import { type ITextService, TextService } from "../src/services/text.service";
+import { type ITextService, TextService } from "../src/practice/text.service";
 
 describe("TextService", () => {
   describe("truncate", () => {

@@ -1,9 +1,12 @@
 import type { Editor } from "obsidian";
 import { container } from "tsyringe";
+import { PracticeModalService } from "./practice/practice-modal.service";
+import { ProgressService } from "./practice/progress.service";
+import { QuestsService } from "./practice/quests.service";
+import { RandomService } from "./practice/random.service";
+import { TextService } from "./practice/text.service";
 import { AdapterService } from "./services/adapter.service";
 import { AudioService } from "./services/audio.service";
-import { BlitzService } from "./services/blitz.service";
-import { BlitzModalService } from "./services/blitz-modal.service";
 import { CacheService } from "./services/cache.service";
 import { ConductorService } from "./services/conductor.service";
 import { CustomTranslationService } from "./services/custom-translation.service";
@@ -16,12 +19,10 @@ import { type IMppService, MppService } from "./services/mpp.service";
 import { PartsService } from "./services/parts.service";
 import { PathsService } from "./services/paths.service";
 import { PlayerService } from "./services/player.service";
-import { ProgressBarService } from "./services/progress-bar.service";
 import { type IRibbonIconService, RibbonIconService } from "./services/ribbon-icon.service";
 import { SettingTabService } from "./services/setting-tab.service";
 import { type ISettingsService, SettingsService } from "./services/settings.service";
 import { TesterService } from "./services/tester.service";
-import { TextService } from "./services/text.service";
 import { type ITranslateCommandService, TranslateCommandService } from "./services/translate-command.service";
 import { TranslationService } from "./services/translation.service";
 import { TtsService } from "./services/tts.service";
@@ -71,10 +72,7 @@ export class Register implements IRegister {
       ["IPlayerService", PlayerService],
       ["IAudioService", AudioService],
       ["ITtsService", TtsService],
-      ["IProgressBarService", ProgressBarService],
       ["SettingTabService", SettingTabService],
-      ["IBlitzModalService", BlitzModalService],
-      ["IBlitzService", BlitzService],
       ["IRibbonIconService", RibbonIconService],
       ["IAdapterService", AdapterService],
       ["ITextService", TextService],
@@ -84,6 +82,10 @@ export class Register implements IRegister {
       ["GoogleTtsService", GoogleTtsService],
       ["CustomTtsService", CustomTtsService],
       ["ITesterService", TesterService],
+      ["IPracticeModalService", PracticeModalService],
+      ["IProgressService", ProgressService],
+      ["IQuestsService", QuestsService],
+      ["IRandomService", RandomService],
     ];
 
     services.forEach(([token, value]) => {

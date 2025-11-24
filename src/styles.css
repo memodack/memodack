@@ -10,75 +10,75 @@
   cursor: pointer;
 }
 
-.memodack___blitz__answers {
+.memodack___quest__answers {
   display: flex;
   gap: 4px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.memodack___blitz__answers .correct {
+.memodack___quest__answers .correct {
   border: solid 1px #47b479;
   color: #257f4f;
   background-color: #eefff9;
 }
 
-.memodack___blitz__answers .wrong {
+.memodack___quest__answers .wrong {
   border: solid 1px #c52222;
   color: #bd0303d4;
   background-color: #ff342030;
 }
 
-.memodack___blitz__answers .word {
+.memodack___quest__answers .word {
   text-align: center;
 }
 
-.memodack___blitz__answers button:hover {
+.memodack___quest__answers button:hover {
   cursor: pointer;
 }
 
-.memodack___blitz__answers button:disabled {
+.memodack___quest__answers button:disabled {
   cursor: default;
 }
 
-.memodack___blitz__answers button:focus-visible {
+.memodack___quest__answers button:focus-visible {
   box-shadow: var(--input-shadow);
 }
 
-.memodack___blitz__progress {
+.memodack___quest__progress {
   height: 1px;
   margin: 1rem 0;
   width: 100%;
   border: none;
 }
 
-.memodack___blitz__progress::-webkit-progress-bar {
+.memodack___quest__progress::-webkit-progress-bar {
   background-color: var(--hr-color);
 }
 
-.memodack___blitz__progress::-webkit-progress-value {
+.memodack___quest__progress::-webkit-progress-value {
   background-color: #4caf50;
 }
 
-.memodack___blitz__next {
+.memodack___quest__next {
   display: flex;
   justify-content: center;
 }
 
-.memodack___blitz__next button {
+.memodack___quest__next button {
   cursor: pointer;
 }
 
-.memodack___blitz__next button:disabled {
+.memodack___quest__next button:disabled {
   cursor: default;
 }
 
-.memodack___blitz__question {
+.memodack___quest__question {
   text-align: center;
   margin: 0.5rem;
 }
 
-.memodack___blitz__text {
+.memodack___quest__text {
   text-align: center;
   opacity: 0.5;
   width: 80%;
@@ -86,7 +86,7 @@
   margin-top: 0;
 }
 
-.memodack___blitz__image {
+.memodack___quest__image {
   height: 170px;
   min-height: 170px;
   border-radius: var(--modal-radius);
@@ -105,12 +105,12 @@
     background-color: #2d2d2d;
   }
 
-  .memodack___blitz__answers .correct {
+  .memodack___quest__answers .correct {
     color: #23b96a;
     background-color: #294138;
   }
 
-  .memodack___blitz__answers .wrong {
+  .memodack___quest__answers .wrong {
     border: solid 1px #c52222;
     color: #df3e3e;
     background-color: #d5210f38;
@@ -122,12 +122,12 @@ body.theme-dark .memodack___syntax {
   background-color: #2d2d2d;
 }
 
-body.theme-dark .memodack___blitz__answers .correct {
+body.theme-dark .memodack___quest__answers .correct {
   color: #23b96a;
   background-color: #294138;
 }
 
-body.theme-dark .memodack___blitz__answers .wrong {
+body.theme-dark .memodack___quest__answers .wrong {
   border: solid 1px #c52222;
   color: #df3e3e;
   background-color: #d5210f38;

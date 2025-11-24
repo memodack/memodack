@@ -1,6 +1,8 @@
 import { Notice } from "obsidian";
 import { inject, singleton } from "tsyringe";
-import type { IBlitzModalService } from "./blitz-modal.service";
+import type { IPracticeModalService } from "../practice/practice-modal.service";
+import type { IQuestsService } from "../practice/quests.service";
+import type { IWord } from "../types";
 import type { IPart, IPartsService } from "./parts.service";
 import type { IWorkspaceService } from "./workspace.service";
 
@@ -21,8 +23,10 @@ export class RibbonIconService implements IRibbonIconService {
     @inject("IWorkspaceService")
     private readonly workspaceService: IWorkspaceService,
     @inject("IPartsService") private readonly partsService: IPartsService,
-    @inject("IBlitzModalService")
-    private readonly blitzModalService: IBlitzModalService,
+    @inject("IPracticeModalService")
+    private readonly practiceModalService: IPracticeModalService,
+    @inject("IQuestsService")
+    private readonly questsService: IQuestsService,
   ) {}
 
   getIcon(): string {
@@ -55,7 +59,14 @@ export class RibbonIconService implements IRibbonIconService {
       return;
     }
 
-    this.blitzModalService.setParts(parts);
-    this.blitzModalService.open();
+    const words: IWord[] = parts.map((p) => ({
+      value: p.value,
+      translation: p.translation,
+      text: p?.text || null,
+      imageUrl: p?.imageUrl || null,
+    }));
+
+    this.questsService.createQuests(words);
+    this.practiceModalService.open();
   };
 }
