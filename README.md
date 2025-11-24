@@ -2,7 +2,9 @@
 
 Forget expensive apps like [Quizlet](https://quizlet.com/), [Readlang](https://readlang.com/), and others. [Memodack](https://github.com/memodack/memodack) is a simpler, free alternative built just for memorizing language parts. Learn anytime, anywhere — offline, on mobile or desktop.
 
-![preview](docs/preview.png)
+![alt text](docs/preview.png)
+
+[Demo](https://github.com/memodack/memodack/blob/main/docs/demo.md)
 
 ## Content
 
