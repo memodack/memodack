@@ -26,6 +26,7 @@ export default class MemodackPlugin extends Plugin {
     this.addCommand({
       id: "translate",
       name: "Translate",
+      icon: "languages",
       editorCallback: (editor) => {
         register.registerEditor(editor);
         return register.getTranslateCommandService().getCallback();

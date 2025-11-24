@@ -3,7 +3,7 @@ import { inject, singleton } from "tsyringe";
 import type { IPracticeModalService } from "../practice/practice-modal.service";
 import type { IQuestsService } from "../practice/quests.service";
 import type { IWord } from "../types";
-import type { IPart, IPartsService } from "./parts.service";
+import type { IWordsService } from "./words.service";
 import type { IWorkspaceService } from "./workspace.service";
 
 export interface IRibbonIconService {
@@ -22,7 +22,7 @@ export class RibbonIconService implements IRibbonIconService {
   constructor(
     @inject("IWorkspaceService")
     private readonly workspaceService: IWorkspaceService,
-    @inject("IPartsService") private readonly partsService: IPartsService,
+    @inject("IWordsService") private readonly wordsService: IWordsService,
     @inject("IPracticeModalService")
     private readonly practiceModalService: IPracticeModalService,
     @inject("IQuestsService")
@@ -41,30 +41,23 @@ export class RibbonIconService implements IRibbonIconService {
       return;
     }
 
-    let parts: IPart[] = [];
+    let words: IWord[] = [];
 
-    parts = await this.partsService.getSelectedParts();
+    words = await this.wordsService.getSelectedWords();
 
-    if (!parts.length) {
-      parts = await this.partsService.getParts();
+    if (!words.length) {
+      words = await this.wordsService.getWords();
     }
 
-    if (!parts.length) {
-      new Notice("No parts provided.");
+    if (!words.length) {
+      new Notice("No words provided.");
       return;
     }
 
-    if (parts.length < 4) {
-      new Notice("At least 4 parts required.");
+    if (words.length < 4) {
+      new Notice("At least 4 words required.");
       return;
     }
-
-    const words: IWord[] = parts.map((p) => ({
-      value: p.value,
-      translation: p.translation,
-      text: p?.text || null,
-      imageUrl: p?.imageUrl || null,
-    }));
 
     this.questsService.createQuests(words);
     this.practiceModalService.open();

@@ -38,9 +38,9 @@ export class MppService implements IMppService {
 
       const fragment = document.createDocumentFragment();
 
-      const parts = node.nodeValue.split(/(\{.*?\|.*?\})/);
+      const words = node.nodeValue.split(/(\{.*?\|.*?\})/);
 
-      parts.forEach((part) => {
+      words.forEach((part) => {
         const match = part.match(/\{(.*?)\|(.*?)\}/);
 
         if (match) {

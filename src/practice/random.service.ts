@@ -34,9 +34,9 @@ export class RandomService implements IRandomService {
   }
 
   getSegment(text: string, divider: string = ";"): string {
-    const parts = text.split(divider).map((item) => item.trim());
-    const index = Math.floor(Math.random() * parts.length);
-    return parts[index];
+    const items = text.split(divider).map((item) => item.trim());
+    const index = Math.floor(Math.random() * items.length);
+    return items[index];
   }
 
   getNumbers(maxNumber: number, ignoreNumber: number, count: number): number[] {

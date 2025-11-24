@@ -1,18 +1,12 @@
 import { TFile } from "obsidian";
 import { inject, singleton } from "tsyringe";
+import type { IWord } from "../types";
 import type { IVaultService } from "./vault.service";
 import type { IWorkspaceService } from "./workspace.service";
 
-export interface IPart {
-  value: string;
-  translation: string;
-  text?: string;
-  imageUrl?: string;
-}
-
-export interface IPartsService {
-  getParts(): Promise<IPart[]>;
-  getSelectedParts(): Promise<IPart[]>;
+export interface IWordsService {
+  getWords(): Promise<IWord[]>;
+  getSelectedWords(): Promise<IWord[]>;
 }
 
 interface IExternalLink {
@@ -21,14 +15,14 @@ interface IExternalLink {
 }
 
 @singleton()
-export class PartsService implements IPartsService {
+export class WordsService implements IWordsService {
   constructor(
     @inject("IVaultService") private readonly vaultService: IVaultService,
     @inject("IWorkspaceService")
     private readonly workspaceService: IWorkspaceService,
   ) {}
 
-  async getParts(): Promise<IPart[]> {
+  async getWords(): Promise<IWord[]> {
     const activeFile = this.workspaceService.getActiveFile();
 
     if (!activeFile) {
@@ -41,16 +35,23 @@ export class PartsService implements IPartsService {
       return [];
     }
 
-    const matches = [...content.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g)]; // {value|translation}
+    /**
+     * {value|translation}
+     */
+    const matches = [...content.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g)];
 
-    const parts: IPart[] = [];
+    const words: IWord[] = [];
 
     const texts = content.split("\n");
 
-    // Generate parts array
+    /**
+     * Generate words array
+     */
     matches.forEach((match) => {
-      // Don't put duplicates to the array
-      if (parts.find((item) => item.value === match[1])) {
+      /**
+       * Don't put duplicates to the array
+       */
+      if (words.find((item) => item.value === match[1])) {
         return;
       }
 
@@ -58,16 +59,17 @@ export class PartsService implements IPartsService {
 
       let rawText = texts[textIndex].replaceAll(`{${match[1]}|${match[2]}}`, match[1]);
 
-      const anotherParts = [...rawText.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g)];
+      const anotherWords = [...rawText.matchAll(/\{([^\\|{}]+)\|([^\\|{}]+)\}/g)];
 
-      anotherParts.forEach((item) => {
+      anotherWords.forEach((item) => {
         rawText = rawText.replace(item[0], item[1]);
       });
 
-      const data: IPart = {
+      const data: IWord = {
         value: match[1],
         translation: match[2],
         text: rawText,
+        imageUrl: null,
       };
 
       /**
@@ -79,13 +81,13 @@ export class PartsService implements IPartsService {
         data.imageUrl = imageUrl;
       }
 
-      parts.push(data);
+      words.push(data);
     });
 
-    return parts;
+    return words;
   }
 
-  async getSelectedParts(): Promise<IPart[]> {
+  async getSelectedWords(): Promise<IWord[]> {
     const activeFile = this.workspaceService.getActiveFile();
 
     if (!activeFile) {
@@ -94,7 +96,7 @@ export class PartsService implements IPartsService {
 
     const content = await this.vaultService.read(activeFile);
 
-    const parts: IPart[] = [];
+    const words: IWord[] = [];
 
     const selection = window.getSelection();
 
@@ -102,12 +104,16 @@ export class PartsService implements IPartsService {
       const ranges = selection.getRangeAt(0);
       const spans = document.querySelectorAll(".memodack___syntax");
 
-      // Iterate over all <span> elements
+      /**
+       * Iterate over all <span> elements
+       */
       spans.forEach((span) => {
         const spanRange = document.createRange();
         spanRange.selectNode(span);
 
-        // Check if the selection intersects with the <span> element
+        /**
+         * Check if the selection intersects with the <span> element
+         */
         if (ranges.intersectsNode(span)) {
           const value = span.textContent;
 
@@ -117,9 +123,11 @@ export class PartsService implements IPartsService {
 
           const translation = span.getAttribute("data-translation");
 
-          // Format the string and add it to the array
+          /**
+           * Format the string and add it to the array
+           */
           if (value && translation) {
-            const data: IPart = { value, translation };
+            const data: IWord = { value, translation, text: null, imageUrl: null };
 
             /**
              * Image
@@ -130,15 +138,17 @@ export class PartsService implements IPartsService {
               data.imageUrl = imageUrl;
             }
 
-            parts.push(data);
+            words.push(data);
           }
         }
       });
 
-      // Clear selection
+      /**
+       * Clear selection
+       */
       selection.removeAllRanges();
 
-      return parts;
+      return words;
     }
 
     return [];
@@ -160,7 +170,9 @@ export class PartsService implements IPartsService {
   }
 
   private extractExternalLinks(content: string): IExternalLink[] {
-    // [text](url)
+    /**
+     * [text](url)
+     */
     const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
 
     return [...content.matchAll(regex)].map((m) => ({

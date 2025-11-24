@@ -16,7 +16,6 @@ import { GoogleTranslationService } from "./services/google-translation.service"
 import { GoogleTtsService } from "./services/google-tts.service";
 import { ManifestService } from "./services/manifest.service";
 import { type IMppService, MppService } from "./services/mpp.service";
-import { PartsService } from "./services/parts.service";
 import { PathsService } from "./services/paths.service";
 import { PlayerService } from "./services/player.service";
 import { type IRibbonIconService, RibbonIconService } from "./services/ribbon-icon.service";
@@ -27,6 +26,7 @@ import { type ITranslateCommandService, TranslateCommandService } from "./servic
 import { TranslationService } from "./services/translation.service";
 import { TtsService } from "./services/tts.service";
 import { VaultService } from "./services/vault.service";
+import { WordsService } from "./services/words.service";
 import { WorkspaceService } from "./services/workspace.service";
 import type { TMemodackPlugin } from "./types";
 
@@ -68,7 +68,7 @@ export class Register implements IRegister {
       ["IConductorService", ConductorService],
       ["IMppService", MppService],
       ["ITranslationService", TranslationService],
-      ["IPartsService", PartsService],
+      ["IWordsService", WordsService],
       ["IPlayerService", PlayerService],
       ["IAudioService", AudioService],
       ["ITtsService", TtsService],
