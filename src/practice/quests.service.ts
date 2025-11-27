@@ -39,10 +39,12 @@ export class QuestsService implements IQuestsService {
       const shuffleAnswers = this.randomService.shuffleArray(answers);
       const correctAnswerId = shuffleAnswers.indexOf(q1);
 
+      const helpText = JSON.stringify(word.value) === JSON.stringify(word?.text) ? null : word?.text;
+
       const questItem = new QuestItem({
         imageUrl: word?.imageUrl,
         question: word.value,
-        helpText: word?.text,
+        helpText,
         answers: shuffleAnswers,
         correctAnswerId,
       });
